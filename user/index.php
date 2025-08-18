@@ -429,7 +429,6 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             </div>
         </div>
-        
         <div class="row">
             <div class="col-12">
                 <div class="carousel-container">
@@ -442,47 +441,49 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             $conn = $db->getConnection();
                             
                             // Get featured news items for the carousel
-                           $query = "SELECT * FROM news_updates 
-                            ORDER BY is_featured DESC, sort_order, news_date DESC 
-                            LIMIT 5";
+                            $query = "SELECT * FROM news_updates 
+                                     ORDER BY is_featured DESC, sort_order, news_date DESC 
+                                     LIMIT 5";
                             $stmt = $conn->prepare($query);
                             $stmt->execute();
                             $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            
-                            // Debug: Check if we have news items
-                            // echo "<!-- Debug: Found " . count($newsItems) . " news items -->";
                             
                             if (count($newsItems) > 0) {
                                 $firstItem = true;
                                 foreach ($newsItems as $item): 
                                     $badgeClass = 'badge-' . $item['category'];
                                     $categoryName = ucfirst(str_replace('_', ' ', $item['category']));
-                                    
-                                    // Debug: Check image path
-                                    // echo "<!-- Debug: Image URL: " . $item['image_url'] . " -->";
                             ?>
                             <!-- Slide -->
                             <div class="carousel-item <?= $firstItem ? 'active' : '' ?>">
                                 <?php 
-                                // Check if image exists and construct proper path
+                                // Handle image paths more robustly
                                 $imagePath = $item['image_url'];
+                                $defaultImage = '../assets/images/default-news.jpg';
                                 
-                                // If the path doesn't start with http or /, assume it's relative
-                                if (!preg_match('/^(https?:\/\/|\/)/i', $imagePath)) {
+                                // If image_url is empty, use default
+                                if (empty($imagePath)) {
+                                    $imagePath = $defaultImage;
+                                }
+                                // If it's a relative path, prepend the base URL
+                                elseif (!preg_match('/^(https?:\/\/|\/)/i', $imagePath)) {
                                     $imagePath = '../' . ltrim($imagePath, './');
                                 }
                                 
-                                // Alternative: Use a default image if the file doesn't exist
-                                $defaultImage = '../assets/images/default-news.jpg';
-                                if (!file_exists(str_replace('../', '', $imagePath)) && !filter_var($imagePath, FILTER_VALIDATE_URL)) {
-                                    $imagePath = $defaultImage;
+                                // For local files, check existence (skip for URLs)
+                                $imageToShow = $imagePath;
+                                if (!preg_match('/^https?:\/\//i', $imagePath)) {
+                                    $localPath = str_replace('../', '', $imagePath);
+                                    if (!file_exists($localPath)) {
+                                        $imageToShow = $defaultImage;
+                                    }
                                 }
                                 ?>
                                 
-                                <img src="<?= htmlspecialchars($imagePath) ?>" 
+                                <img src="<?= htmlspecialchars($imageToShow) ?>" 
                                     class="d-block w-100 carousel-image" 
                                     alt="<?= htmlspecialchars($item['title']) ?>"
-                                    onerror="this.src='<?= $defaultImage ?>'; console.log('Image failed to load: <?= htmlspecialchars($imagePath) ?>');">
+                                    onerror="this.src='<?= $defaultImage ?>'; this.onerror=null;">
                                 
                                 <div class="carousel-caption-container">
                                     <div class="carousel-overlay"></div>
