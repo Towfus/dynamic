@@ -15,6 +15,48 @@ $query = "SELECT * FROM impact_stories WHERE status = 'active' ORDER BY story_da
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $stories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Get active partners grouped by category
+$query = "SELECT * FROM partners WHERE status = 'active' ORDER BY category, sort_order, name";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$partners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Group partners by category
+$partnerCategories = [
+    'sustained' => [],
+    'individual' => [],
+    'strengthened' => [],
+    'other' => []
+];
+
+foreach ($partners as $partner) {
+    $partnerCategories[$partner['category']][] = $partner;
+}
+
+// Category titles
+$categoryTitles = [
+    'sustained' => 'Sustained Partners',
+    'individual' => 'Individual Partners',
+    'strengthened' => 'Strengthened Partners',
+    'other' => 'Other Private Partners'
+];
+
+
+// Get all news items for display
+$query = "SELECT * FROM news_updates 
+          ORDER BY is_featured DESC, sort_order, news_date DESC 
+          LIMIT 5";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+
+
+
+
 ?>
 
 
@@ -271,309 +313,245 @@ $stories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-  <script src="script.js"></script>
+  <script src="impact.js"></script>
 
   <!-- Our Valued Partners -->
-  <section class="py-5 bg-light">
+<section class="py-5 bg-light">
     <div class="container">
-      <!-- Section Header -->
-      <div class="text-center mb-5">
-        <h2 class="partner-title" styles="font-size: 4rem;">Our Valued Partners</h2>
-        <div class="section-divider"></div>
-        <p class="text-muted mx-auto" style="font-size: 1.5rem; max-width: 600px;">
-          We appreciate the support of these organizations in advancing quality education in General Trias City
-        </p>
-      </div>
-      
-      <div class="mb-5">
-        <!-- Sustained Partners -->
-        <h3 class="partner-category">Sustained Partners</h3>
-        <div class="row g-4 justify-content-center mb-4">
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/1.png" alt="Individual Partner 1" class="img-fluid partner-logo">
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/2.png" alt="Individual Partner 2" class="img-fluid partner-logo">
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/3.png" alt="Individual Partner 3" class="img-fluid partner-logo">
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/4.png" alt="Individual Partner 4" class="img-fluid partner-logo">
-            </div>
-          </div>
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <h2 class="partner-title" style="font-size: 4rem;">Our Valued Partners</h2>
+            <div class="section-divider mx-auto mb-3" style="width: 150px; height: 4px; background-color: #006400;"></div>
+            <p class="text-muted mx-auto" style="font-size: 1.5rem; max-width: 600px;">
+                We appreciate the support of these organizations in advancing quality education in General Trias City
+            </p>
         </div>
-        <div class="row g-4 justify-content-center mb-4">
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/5.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/6.png" alt="Strengthened Partner 2" class="img-fluid partner-logo">
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/7.png" alt="Strengthened Partner 3" class="img-fluid partner-logo">
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-            <div class="partner-box">
-              <img src="bg_images/Partnership-Logo/8.png" alt="Strengthened Partner 4" class="img-fluid partner-logo">
-            </div>
-          </div>
-        </div>
+        
+        <div class="mb-5">
+            <?php 
+            $showMoreButton = false;
+            $visibleCategories = ['sustained', 'individual'];
+            $hiddenCategories = ['strengthened', 'other'];
+            
+            // Display visible categories
+            foreach ($visibleCategories as $category): 
+                if (!empty($partnerCategories[$category])): ?>
+                    <h3 class="partner-category mb-4"><?= $categoryTitles[$category] ?></h3>
+                    <div class="row g-4 justify-content-center mb-4">
+                        <?php foreach ($partnerCategories[$category] as $partner): ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                                <div class="partner-box text-center">
+                                    <?php if (!empty($partner['website'])): ?>
+                                        <a href="<?= htmlspecialchars($partner['website']) ?>" target="_blank" class="d-block">
+                                            <img src="<?= htmlspecialchars($partner['logo_url']) ?>" 
+                                                 alt="<?= htmlspecialchars($partner['name']) ?>" 
+                                                 class="img-fluid partner-logo" style="max-height: 100px; width: auto;">
+                                            <span class="visually-hidden"><?= htmlspecialchars($partner['name']) ?></span>
+                                        </a>
+                                    <?php else: ?>
+                                        <div class="d-block">
+                                            <img src="<?= htmlspecialchars($partner['logo_url']) ?>" 
+                                                 alt="<?= htmlspecialchars($partner['name']) ?>" 
+                                                 class="img-fluid partner-logo" style="max-height: 100px; width: auto;">
+                                            <span class="visually-hidden"><?= htmlspecialchars($partner['name']) ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif;
+            endforeach; 
+            
+            // Check if we have hidden partners to show
+            $hasHiddenPartners = false;
+            foreach ($hiddenCategories as $category) {
+                if (!empty($partnerCategories[$category])) {
+                    $hasHiddenPartners = true;
+                    break;
+                }
+            }
+            
+            if ($hasHiddenPartners): ?>
+                <!-- Hidden Partners (Initially Hidden) -->
+                <div class="additional-partners d-none" id="morePartners">
+                    <?php foreach ($hiddenCategories as $category): 
+                        if (!empty($partnerCategories[$category])): ?>
+                            <h3 class="partner-category mb-4"><?= $categoryTitles[$category] ?></h3>
+                            <div class="row g-4 justify-content-center mb-4">
+                                <?php foreach ($partnerCategories[$category] as $partner): ?>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                                        <div class="partner-box text-center">
+                                            <?php if (!empty($partner['website'])): ?>
+                                                <a href="<?= htmlspecialchars($partner['website']) ?>" target="_blank" class="d-block">
+                                                    <img src="<?= htmlspecialchars($partner['logo_url']) ?>" 
+                                                         alt="<?= htmlspecialchars($partner['name']) ?>" 
+                                                         class="img-fluid partner-logo" style="max-height: 100px; width: auto;">
+                                                    <span class="visually-hidden"><?= htmlspecialchars($partner['name']) ?></span>
+                                                </a>
+                                            <?php else: ?>
+                                                <div class="d-block">
+                                                    <img src="<?= htmlspecialchars($partner['logo_url']) ?>" 
+                                                         alt="<?= htmlspecialchars($partner['name']) ?>" 
+                                                         class="img-fluid partner-logo" style="max-height: 100px; width: auto;">
+                                                    <span class="visually-hidden"><?= htmlspecialchars($partner['name']) ?></span>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif;
+                    endforeach; ?>
+                </div>
 
-        <!-- Hidden Partners (Initially Hidden) -->
-        <div class="additional-partners d-none" id="morePartners">
-          <div class="row g-4 justify-content-center mb-4">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/9.png" alt="Private Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <h3 class="partner-category">Individual Partners</h3>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/31.png" alt="Private Partner 2" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/32.png" alt="Private Partner 3" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/33.png" alt="Private Partner 4" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/34.png" alt="Private Partner 4" class="img-fluid partner-logo">
-              </div>
-            </div>
-          </div>
-          <h3 class="partner-category">Strengthened Partners</h3>
-          <div class="row g-4 justify-content-center mb-4">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/11.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/12.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/13.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/14.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/15.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/16.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/17.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/18.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/19.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/20.png" alt="Strengthened Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-          </div>
-          <h3 class="partner-category">Other Private Partners</h3>
-          <div class="row g-4 justify-content-center mb-4">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/22.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/23.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/24.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/25.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/26.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/27.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/28.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-              <div class="partner-box">
-                <img src="bg_images/Partnership-Logo/29.png" alt="Other Partner 1" class="img-fluid partner-logo">
-              </div>
-            </div>
-          </div>
+                <!-- View All / View Less Button -->
+                <div class="text-center mt-4">
+                    <button id="view-all-btn" class="btn btn-outline-success">
+                        View All <i class="fas fa-chevron-down ms-2"></i>
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
-
-        <!-- View All / View Less Button -->
-        <div class="text-center mt-4">
-          <button id="view-all-btn" class="view-all-btn">
-            View All <i class="fas fa-chevron-down ms-2"></i>
-          </button>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
+  <script src="partners.js"></script>
 
-  <!-- News & Partnership Carousel -->
-  <section id="news-partnership-updates" class="news-section">
-      <div class="container">
-          <div class="row">
-              <div class="col-12">
-                  <div class="mb-5 text-center">
-                      <h2 class="section-title">News & Partnership Updates</h2>
-                      <p class="lead text-muted">Latest developments and collaborations in our educational initiatives</p>
-                  </div>
-              </div>
-          </div>
-          
-          <div class="row">
-              <div class="col-12">
-                  <div class="carousel-container">
-                      <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
-                          <div class="carousel-inner">
-                              <!-- Slide 1 -->
-                              <div class="carousel-item active">
-                                  <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
-                                        class="d-block w-100 carousel-image" 
-                                        alt="Officials signing partnership agreement">
-                                  
-                                  <div class="carousel-caption-container">
-                                      <div class="d-flex align-items-center mb-2">
-                                          <span class="news-badge badge-partnership">Partnership</span>
-                                          <span class="news-date"><i class="far fa-calendar me-1"></i> June 5, 2023</span>
-                                      </div>
-                                      <h3 class="news-title">New Partnership with ABC Corporation Signed</h3>
-                                      <p class="news-excerpt">
-                                          ABC Corporation commits ₱2.5M for classroom construction and teacher training in three public schools. This partnership will benefit over 1,200 students in underserved communities.
-                                      </p>
-                                      <a href="#" class="read-more-link">
-                                          Read More <i class="fas fa-arrow-right ms-2"></i>
-                                      </a>
-                                  </div>
-                              </div>
-                              
-                              <!-- Slide 2 -->
-                              <div class="carousel-item">
-                                  <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
-                                        class="d-block w-100 carousel-image" 
-                                        alt="Volunteers painting school buildings">
-                                  
-                                  <div class="carousel-caption-container">
-                                      <div class="d-flex align-items-center mb-2">
-                                          <span class="news-badge badge-brigada">Brigada Eskwela</span>
-                                          <span class="news-date"><i class="far fa-calendar me-1"></i> May 22, 2023</span>
-                                      </div>
-                                      <h3 class="news-title">Brigada Eskwela 2023 Kicks Off</h3>
-                                      <p class="news-excerpt">
-                                          Over 500 volunteers participated in the annual school maintenance program, preparing 18 schools for SY 2023-2024. Community members, teachers, and students worked together to improve learning environments.
-                                      </p>
-                                      <a href="#" class="read-more-link">
-                                          Read More <i class="fas fa-arrow-right ms-2"></i>
-                                      </a>
-                                  </div>
-                              </div>
-                              
-                              <!-- Slide 3 -->
-                              <div class="carousel-item">
-                                  <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
-                                        class="d-block w-100 carousel-image" 
-                                        alt="School officials receiving an award">
-                                  
-                                  <div class="carousel-caption-container">
-                                      <div class="d-flex align-items-center mb-2">
-                                          <span class="news-badge badge-achievement">Achievement</span>
-                                          <span class="news-date"><i class="far fa-calendar me-1"></i> May 10, 2023</span>
-                                      </div>
-                                      <h3 class="news-title">SDO GenTri Wins National Partnership Award</h3>
-                                      <p class="news-excerpt">
-                                          Recognized for innovative partnership models and sustainable community engagement programs at the DepEd National Summit. The award highlights our commitment to educational excellence.
-                                      </p>
-                                      <a href="#" class="read-more-link">
-                                          Read More <i class="fas fa-arrow-right ms-2"></i>
-                                      </a>
-                                  </div>
-                              </div>
-                          </div>
-                          
-                          <!-- Carousel Indicators -->
-                          <div class="carousel-indicators">
-                              <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                              <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                              <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                          </div>
-                      </div>
-                      
-                      <!-- Custom Navigation Buttons -->
-                      <div class="carousel-nav">
-                          <button class="carousel-btn" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
-                              <i class="fas fa-chevron-left"></i>
-                          </button>
-                          <button class="carousel-btn" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
-                              <i class="fas fa-chevron-right"></i>
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </section>
+
+<!-- News & Partnership Carousel -->
+<section id="news-partnership-updates" class="news-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-5 text-center">
+                    <h2 class="section-title">News & Partnership Updates</h2>
+                    <p class="lead text-muted">Latest developments and collaborations in our educational initiatives</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="carousel-container">
+                    <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <?php 
+                            // Include database connection
+                            require_once '../config/database.php';
+                            $db = new Database();
+                            $conn = $db->getConnection();
+                            
+                            // Get featured news items for the carousel
+                           $query = "SELECT * FROM news_updates 
+                            ORDER BY is_featured DESC, sort_order, news_date DESC 
+                            LIMIT 5";
+                            $stmt = $conn->prepare($query);
+                            $stmt->execute();
+                            $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            // Debug: Check if we have news items
+                            // echo "<!-- Debug: Found " . count($newsItems) . " news items -->";
+                            
+                            if (count($newsItems) > 0) {
+                                $firstItem = true;
+                                foreach ($newsItems as $item): 
+                                    $badgeClass = 'badge-' . $item['category'];
+                                    $categoryName = ucfirst(str_replace('_', ' ', $item['category']));
+                                    
+                                    // Debug: Check image path
+                                    // echo "<!-- Debug: Image URL: " . $item['image_url'] . " -->";
+                            ?>
+                            <!-- Slide -->
+                            <div class="carousel-item <?= $firstItem ? 'active' : '' ?>">
+                                <?php 
+                                // Check if image exists and construct proper path
+                                $imagePath = $item['image_url'];
+                                
+                                // If the path doesn't start with http or /, assume it's relative
+                                if (!preg_match('/^(https?:\/\/|\/)/i', $imagePath)) {
+                                    $imagePath = '../' . ltrim($imagePath, './');
+                                }
+                                
+                                // Alternative: Use a default image if the file doesn't exist
+                                $defaultImage = '../assets/images/default-news.jpg';
+                                if (!file_exists(str_replace('../', '', $imagePath)) && !filter_var($imagePath, FILTER_VALIDATE_URL)) {
+                                    $imagePath = $defaultImage;
+                                }
+                                ?>
+                                
+                                <img src="<?= htmlspecialchars($imagePath) ?>" 
+                                    class="d-block w-100 carousel-image" 
+                                    alt="<?= htmlspecialchars($item['title']) ?>"
+                                    onerror="this.src='<?= $defaultImage ?>'; console.log('Image failed to load: <?= htmlspecialchars($imagePath) ?>');">
+                                
+                                <div class="carousel-caption-container">
+                                    <div class="carousel-overlay"></div>
+                                    <div class="carousel-content">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="news-badge <?= $badgeClass ?>"><?= $categoryName ?></span>
+                                            <span class="news-date">
+                                                <i class="far fa-calendar me-1"></i> 
+                                                <?= date('F j, Y', strtotime($item['news_date'])) ?>
+                                            </span>
+                                        </div>
+                                        <h3 class="news-title"><?= htmlspecialchars($item['title']) ?></h3>
+                                        <p class="news-excerpt">
+                                            <?= htmlspecialchars(substr($item['excerpt'], 0, 150)) ?><?= strlen($item['excerpt']) > 150 ? '...' : '' ?>
+                                        </p>
+                                        <a href="news_details.php?id=<?= $item['id'] ?>" class="read-more-link">
+                                            Read More <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php 
+                                    $firstItem = false;
+                                endforeach; 
+                            } else {
+                                // No news items found - show placeholder
+                            ?>
+                                <div class="carousel-item active">
+                                    <div class="text-center p-5 bg-light rounded">
+                                        <div class="py-5">
+                                            <i class="fas fa-newspaper fa-4x text-muted mb-4"></i>
+                                            <h3 class="text-muted">No News Updates Available</h3>
+                                            <p class="text-muted">Check back later for the latest news and updates.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            }
+                            ?>
+                        </div>
+                        
+                        <?php if (count($newsItems) > 1): ?>
+                        <!-- Carousel Indicators -->
+                        <div class="carousel-indicators">
+                            <?php for ($i = 0; $i < count($newsItems); $i++): ?>
+                            <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="<?= $i ?>" 
+                                <?= $i === 0 ? 'class="active" aria-current="true"' : '' ?> 
+                                aria-label="Slide <?= $i + 1 ?>"></button>
+                            <?php endfor; ?>
+                        </div>
+                        
+                        <!-- Custom Navigation Buttons -->
+                        <div class="carousel-nav">
+                            <button class="carousel-btn carousel-btn-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                                <i class="fas fa-chevron-left"></i>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-btn carousel-btn-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                                <i class="fas fa-chevron-right"></i>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
