@@ -5,7 +5,6 @@ $dbname = 'sdo_gentri';
 $username = 'root';
 $password = '';
 
-
 try {
     // Create PDO connection
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
@@ -16,23 +15,29 @@ try {
     $stmt = $pdo->query("SELECT * FROM project_highlights WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC");
     $highlights = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Now you can use $highlights array containing your data
-    
 } catch (PDOException $e) {
     // Handle connection errors
-    die("Database connection failed: " . $e->getMessage());
+    error_log("Database connection failed: " . $e->getMessage());
+    $highlights = []; // Set empty array if connection fails
 }
 
-// Separate visible and hidden items
-$visibleCount = 2; // Number of items to show initially
-$visibleHighlights = array_slice($highlights, 0, $visibleCount);
-$hiddenHighlights = array_slice($highlights, $visibleCount);
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+// Function to get image source
+function getImageSrc($id) {
+    global $pdo;
+    try {
+        $query = "SELECT image_data, image_type FROM project_highlights WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
+        $image = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($image && $image['image_data']) {
+            return 'data:' . $image['image_type'] . ';base64,' . base64_encode($image['image_data']);
+        }
+        return '';
+    } catch (PDOException $e) {
+        error_log("Error fetching image: " . $e->getMessage());
+        return '';
+    }
 }
 
 // Function to fetch timeline data from database
@@ -93,6 +98,11 @@ $timelineData = getTimelineData($pdo);
 // Handle AJAX request for showing all items
 $showAll = isset($_GET['show_all']) && $_GET['show_all'] === 'true';
 $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
+
+// Separate visible and hidden highlights
+$visibleCount = 6; // Show first 6 items by default
+$visibleHighlights = array_slice($highlights, 0, $visibleCount);
+$hiddenHighlights = array_slice($highlights, $visibleCount);
 ?>
 
 <!DOCTYPE html>
@@ -423,26 +433,6 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         .timeline-dot {
             position: absolute;
             left: 50%;
@@ -581,22 +571,21 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                 <h1>Project ISSHED</h1>
                 <p class="hero-subtitle">Implementing Social Services and Health Education for Sustainable Development</p>
             </div>
-            </section>
+        </section>
 
-            <section class="mission-section">
-                <div class="container">
-                    <div class="mission-header">
-                    <span class="mission-tag">ALIGNED WITH DEPED MATATAG AGENDA</span>
-                    <h1 class="mission-title">
-                        Strengthening Philippine <br> Education Through <br>
-                        <span class="text-maroon">Four Instructional Principles (4Is)</span>
-                    </h1>
-                    <p class="mission-subtitle">
-                        Project ISSHEd fully supports DepEd’s transformative MATATAG agenda by aligning its initiatives with efforts to enhance curriculum relevance, improve school facilities, promote learner inclusivity, and uplift teacher welfare for quality basic education. Through these priorities, Project ISSHED creates synergies between health education and sustainable development, supporting DepEd's vision for transformative basic education.
-                    </p>
-                    </div>
+        <section class="mission-section">
+            <div class="container">
+                <div class="mission-header">
+                <span class="mission-tag">ALIGNED WITH DEPED MATATAG AGENDA</span>
+                <h1 class="mission-title">
+                    Strengthening Philippine <br> Education Through <br>
+                    <span class="text-maroon">Four Instructional Principles (4Is)</span>
+                </h1>
+                <p class="mission-subtitle">
+                    Project ISSHEd fully supports DepEd's transformative MATATAG agenda by aligning its initiatives with efforts to enhance curriculum relevance, improve school facilities, promote learner inclusivity, and uplift teacher welfare for quality basic education. Through these priorities, Project ISSHED creates synergies between health education and sustainable development, supporting DepEd's vision for transformative basic education.
+                </p>
                 </div>
-            </section>
+            </div>
         </section>
 
         <!-- Priority Cards -->
@@ -750,7 +739,7 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                         <div class="col-md-6">
                             <ul class="program-list list-group list-group-flush shadow-sm">
                             <li class="list-group-item bg-white">150% tax deduction from gross income.</li>
-                            <li class="list-group-item bg-white">Exemption from Donors’ Tax.</li>
+                            <li class="list-group-item bg-white">Exemption from Donors' Tax.</li>
                             <li class="list-group-item bg-white">Duty/tax-free importation for foreign donations.</li>
                             </ul>
                         </div>
@@ -789,7 +778,7 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                         <div class="col-md-6">
                             <ul class="program-list list-group list-group-flush shadow-sm">
                             <li class="list-group-item bg-white">150% tax deduction from gross income.</li>
-                            <li class="list-group-item bg-white">Exemption from Donors’ Tax.</li>
+                            <li class="list-group-item bg-white">Exemption from Donors' Tax.</li>
                             <li class="list-group-item bg-white">Duty/tax-free importation for foreign donations.</li>
                             </ul>
                         </div>
@@ -805,6 +794,7 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
             </section>
         </section>
 
+<!-- Project Timeline Section - FIXED VERSION -->
 <div class="min-h-screen py-12 px-4 bg-gray-50">
     <div class="max-w-6xl mx-auto">
         <!-- Header Section -->
@@ -831,18 +821,27 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                         'count' => $statusCounts['completed'],
                         'label' => 'Completed',
                         'color' => 'green',
+                        'bg_color' => 'bg-green-100',
+                        'text_color' => 'text-green-600',
+                        'border_color' => 'border-green-500',
                         'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
                     ],
                     [
                         'count' => $statusCounts['in-progress'],
                         'label' => 'In Progress',
                         'color' => 'yellow',
+                        'bg_color' => 'bg-yellow-100',
+                        'text_color' => 'text-yellow-600',
+                        'border_color' => 'border-yellow-500',
                         'icon' => 'M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
                     ],
                     [
                         'count' => $statusCounts['planned'],
                         'label' => 'Planned',
                         'color' => 'blue',
+                        'bg_color' => 'bg-blue-100',
+                        'text_color' => 'text-blue-600',
+                        'border_color' => 'border-blue-500',
                         'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
                     ]
                 ];
@@ -851,13 +850,13 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                 ?>
                 <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex items-center gap-3">
-                        <div class="p-2 rounded-full bg-<?php echo $card['color']; ?>-100">
-                            <svg class="w-6 h-6 text-<?php echo $card['color']; ?>-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-2 rounded-full <?php echo $card['bg_color']; ?>">
+                            <svg class="w-6 h-6 <?php echo $card['text_color']; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<?php echo $card['icon']; ?>"></path>
                             </svg>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-<?php echo $card['color']; ?>-600"><?php echo $card['count']; ?></div>
+                            <div class="text-2xl font-bold <?php echo $card['text_color']; ?>"><?php echo $card['count']; ?></div>
                             <div class="text-sm text-gray-600"><?php echo $card['label']; ?></div>
                         </div>
                     </div>
@@ -881,34 +880,50 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
             </div>
         <?php else: ?>
             <!-- Timeline Container -->
-            <div class="relative">
+            <div class="relative" id="timelineContainer">
                 <!-- Timeline Line -->
-                <div class="absolute left-1/2 w-1 h-full bg-gradient-to-b from-green-500 to-blue-500 transform -translate-x-1/2" aria-hidden="true"></div>
+                <div class="timeline-line-bg absolute left-1/2 w-1 bg-gradient-to-b from-green-500 to-blue-500 transform -translate-x-1/2" aria-hidden="true" style="height: 100%; top: 60px;"></div>
 
                 <!-- Timeline Items -->
-                <div class="space-y-16">
+                <div class="space-y-16" id="timelineItems">
                     <?php foreach ($displayedItems as $index => $item): 
                         $position = isset($item['position']) ? $item['position'] : ($index % 2 === 0 ? 'right' : 'left');
                         $isRight = $position === 'right';
+                        
+                        // Get status colors
+                        $statusColors = [
+                            'completed' => ['bg' => 'bg-green-500', 'text' => 'text-green-800', 'border' => 'border-green-500'],
+                            'in-progress' => ['bg' => 'bg-yellow-500', 'text' => 'text-yellow-800', 'border' => 'border-yellow-500'],
+                            'planned' => ['bg' => 'bg-blue-500', 'text' => 'text-blue-800', 'border' => 'border-blue-500']
+                        ];
+                        
+                        $colors = $statusColors[$item['category']] ?? $statusColors['planned'];
                     ?>
-                    <div class="relative timeline-item group" data-index="<?php echo $index; ?>">
+                    <div class="relative timeline-item-wrapper group" data-index="<?php echo $index; ?>">
                         <!-- Timeline Dot -->
-                        <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white bg-<?php echo getStatusColor($item['category'], false); ?>-500 shadow-md z-10" aria-hidden="true"></div>
+                        <div class="timeline-dot-wrapper absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white <?php echo $colors['bg']; ?> shadow-md z-10" aria-hidden="true"></div>
 
                         <!-- Content Container -->
-                        <div class="timeline-item-container flex flex-col md:flex-row items-center <?php echo $isRight ? 'md:flex-row-reverse' : ''; ?>">
+                        <div class="timeline-content-wrapper flex flex-col md:flex-row items-center <?php echo $isRight ? 'md:flex-row-reverse' : ''; ?>">
                             <!-- Content Card -->
                             <div class="w-full md:w-5/12 <?php echo $isRight ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'; ?> mt-8 md:mt-0">
-                                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl p-6 border-l-4 border-<?php echo getStatusColor($item['category'], false); ?>-500 transition-all duration-300 hover:-translate-y-1">
+                                <div class="timeline-card bg-white rounded-xl shadow-lg hover:shadow-xl p-6 border-l-4 <?php echo $colors['border']; ?> transition-all duration-300 hover:-translate-y-1">
                                     <!-- Date and Featured Badge -->
                                     <div class="flex items-center gap-3 mb-4 <?php echo $isRight ? 'justify-end' : 'justify-start'; ?>">
                                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                         <span class="text-green-600 font-semibold text-sm">
-                                            <?php echo formatDate($item['event_date']); ?>
+                                            <?php 
+                                            if (!empty($item['event_date'])) {
+                                                $date = new DateTime($item['event_date']);
+                                                echo $date->format('M j, Y');
+                                            } else {
+                                                echo 'Date TBD';
+                                            }
+                                            ?>
                                         </span>
-                                        <?php if ($item['is_featured']): ?>
+                                        <?php if (!empty($item['is_featured']) && $item['is_featured']): ?>
                                         <span class="bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full font-medium">
                                             ⭐ Featured
                                         </span>
@@ -928,26 +943,28 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                                             alt="<?php echo htmlspecialchars($item['title']); ?>"
                                             class="w-full h-48 md:h-56 object-cover hover:scale-105 transition-transform duration-500"
                                             loading="lazy"
-                                            onerror="this.onerror=null;this.src='assets/images/timeline-placeholder.jpg'"
+                                            onerror="this.onerror=null;this.src='https://via.placeholder.com/400x300/cccccc/666666?text=Image+Not+Available'"
                                         />
                                     </div>
                                     <?php endif; ?>
 
                                     <!-- Description -->
-                                    <div class="text-gray-600 mb-4 leading-relaxed text-base prose max-w-none">
+                                    <?php if (!empty($item['description'])): ?>
+                                    <div class="text-gray-600 mb-4 leading-relaxed text-base">
                                         <?php echo nl2br(htmlspecialchars($item['description'])); ?>
                                     </div>
+                                    <?php endif; ?>
 
                                     <!-- Status Badge -->
                                     <div class="flex <?php echo $isRight ? 'justify-end' : 'justify-start'; ?>">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-<?php echo getStatusColor($item['category'], false); ?>-100 text-<?php echo getStatusColor($item['category'], false); ?>-800">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-<?php echo str_replace('bg-', '', str_replace('-500', '-100', $colors['bg'])); ?> <?php echo $colors['text']; ?>">
                                             <?php 
                                             $statusIcons = [
                                                 'completed' => '✅',
                                                 'in-progress' => '🔄',
                                                 'planned' => '📋'
                                             ];
-                                            echo ($statusIcons[$item['category']] ?? '') . ' ' . ucfirst(str_replace('-', ' ', $item['category']));
+                                            echo ($statusIcons[$item['category']] ?? '📋') . ' ' . ucfirst(str_replace('-', ' ', $item['category']));
                                             ?>
                                         </span>
                                     </div>
@@ -966,8 +983,8 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
             <?php if (count($timelineData) > 2): ?>
             <div class="text-center mt-16">
                 <button 
-                    onclick="toggleTimeline()"
-                    id="toggleButton"
+                    onclick="toggleTimelineView()"
+                    id="timelineToggleButton"
                     aria-expanded="<?php echo $showAll ? 'true' : 'false'; ?>"
                     aria-controls="timelineItems"
                     class="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-lg md:rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -985,10 +1002,140 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
                     <?php endif; ?>
                 </button>
             </div>
-             <?php endif; ?>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Additional CSS for Timeline -->
+<style>
+.timeline-line-bg {
+    min-height: 500px;
+}
+
+.timeline-item-wrapper {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.timeline-item-wrapper.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.timeline-dot-wrapper {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .5;
+    }
+}
+
+.timeline-card {
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+.timeline-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 768px) {
+    .timeline-line-bg {
+        left: 2rem !important;
+    }
+    .timeline-dot-wrapper {
+        left: 2rem !important;
+    }
+    .timeline-content-wrapper {
+        padding-left: 4rem;
+    }
+}
+
+/* Fix for Tailwind color classes that might not work */
+.bg-green-100 { background-color: #dcfce7; }
+.bg-yellow-100 { background-color: #fef3c7; }
+.bg-blue-100 { background-color: #dbeafe; }
+.text-green-600 { color: #16a34a; }
+.text-yellow-600 { color: #ca8a04; }
+.text-blue-600 { color: #2563eb; }
+.text-green-800 { color: #166534; }
+.text-yellow-800 { color: #92400e; }
+.text-blue-800 { color: #1e40af; }
+.bg-green-500 { background-color: #22c55e; }
+.bg-yellow-500 { background-color: #eab308; }
+.bg-blue-500 { background-color: #3b82f6; }
+.border-green-500 { border-color: #22c55e; }
+.border-yellow-500 { border-color: #eab308; }
+.border-blue-500 { border-color: #3b82f6; }
+</style>
+
+<!-- Updated JavaScript for Timeline -->
+<script>
+// Separate timeline toggle function to avoid conflicts
+function toggleTimelineView() {
+    const currentUrl = new URL(window.location);
+    const showAll = currentUrl.searchParams.get('show_all') === 'true';
+    
+    if (showAll) {
+        currentUrl.searchParams.delete('show_all');
+    } else {
+        currentUrl.searchParams.set('show_all', 'true');
+    }
+    
+    // Show loading state
+    const button = document.getElementById('timelineToggleButton');
+    if (button) {
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div> Loading...';
+        button.disabled = true;
+    }
+    
+    // Redirect to new URL
+    window.location.href = currentUrl.toString();
+}
+
+// Enhanced timeline animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Timeline item animations
+    const timelineObserver = new IntersectionObserver(function(entries) {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('animate-in');
+                }, index * 200);
+                timelineObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    // Observe timeline items
+    document.querySelectorAll('.timeline-item-wrapper').forEach(item => {
+        timelineObserver.observe(item);
+    });
+    
+    // Add click handlers for timeline cards
+    document.querySelectorAll('.timeline-card').forEach(card => {
+        card.addEventListener('click', function() {
+            // Add a subtle click animation
+            this.style.transform = 'translateY(-2px) scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-4px) scale(1)';
+            }, 150);
+        });
+    });
+});
+</script>
 
 <?php 
 // Helper functions would typically be in a separate file
@@ -1008,183 +1155,157 @@ function formatDate($dateString) {
 }
 ?>
 
-<script>
-function toggleTimeline() {
-    const container = document.querySelector('.relative'); // Your timeline container
-    const button = document.getElementById('toggleButton');
-    const allItems = document.querySelectorAll('.timeline-item');
-    
-    if (container.classList.contains('expanded')) {
-        // Collapse - hide items after first 2
-        container.classList.remove('expanded');
-        button.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> View All Timeline (' + allItems.length + ' events)';
-        
-        allItems.forEach((item, index) => {
-            if (index >= 2) {
-                item.classList.add('hidden');
-            }
-        });
-    } else {
-        // Expand - show all items
-        container.classList.add('expanded');
-        button.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg> Show Less';
-        
-        allItems.forEach(item => {
-            item.classList.remove('hidden');
-        });
-        
-        // Animate newly shown items
-        animateTimelineItems();
-    }
-}
-
-function animateTimelineItems() {
-    const hiddenItems = document.querySelectorAll('.timeline-item.hidden');
-    hiddenItems.forEach((item, index) => {
-        setTimeout(() => {
-            item.classList.remove('hidden');
-            item.classList.add('animate');
-        }, index * 150);
-    });
-}
-</script>     
-
 <!-- Project Highlights Section -->
-    <section id="gallery">
-        <div class="section-header text-center">
-            <h2>Project Highlights</h2>
-            <p class="lead">Moments that inspire us to keep going and achieve greatness.</p>
-        </div>
+<section id="gallery">
+    <div class="section-header text-center">
+        <h2>Project Highlights</h2>
+        <p class="lead">Moments that inspire us to keep going and achieve greatness.</p>
+    </div>
 
-        <div class="container">
-            <?php if (empty($highlights)): ?>
-                <div class="no-highlights">
-                    <i class="bi bi-images"></i>
-                    <h4>No Highlights Available</h4>
-                    <p>Check back later for exciting updates from Project ISSHED.</p>
-                </div>
-            <?php else: ?>
-                <div class="gallery-container gallery-collapsed" id="galleryContainer">
-                    <div class="gallery-grid" id="galleryGrid">
-                        
-                        <!-- Visible Items -->
-                        <?php foreach ($visibleHighlights as $highlight): ?>
-                            <div class="gallery-item-container">
-                                <div class="gallery-item" onclick="showHighlightModal(<?php echo $highlight['id']; ?>)">
-                                    <?php if ($highlight['is_featured']): ?>
-                                        <div class="featured-badge">
-                                            <i class="bi bi-star-fill"></i>
-                                            Featured
-                                        </div>
+    <div class="container">
+        <?php if (empty($highlights)): ?>
+            <div class="no-highlights">
+                <i class="fas fa-images"></i>
+                <h4>No Highlights Available</h4>
+                <p>Check back later for exciting updates from our projects.</p>
+            </div>
+        <?php else: ?>
+            <div class="gallery-container gallery-collapsed" id="galleryContainer">
+                <div class="gallery-grid" id="galleryGrid">
+                    
+                    <!-- Visible Items -->
+                    <?php foreach ($visibleHighlights as $highlight): ?>
+                        <div class="gallery-item-container">
+                            <div class="gallery-item" onclick="showHighlightModal(<?php echo htmlspecialchars(json_encode($highlight)); ?>)">
+                                <?php if ($highlight['is_featured']): ?>
+                                    <div class="featured-badge">
+                                        <i class="fas fa-star"></i>
+                                        Featured
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <div class="gallery-img-container">
+                                    <?php $imgSrc = getImageSrc($highlight['id']); ?>
+                                    <img src="<?php echo $imgSrc ? $imgSrc : 'https://via.placeholder.com/400x220/800000/ffffff?text=Project+ISSHED'; ?>" 
+                                         alt="<?php echo htmlspecialchars($highlight['title']); ?>"
+                                         loading="lazy"
+                                         onerror="this.src='https://via.placeholder.com/400x220/800000/ffffff?text=Image+Not+Found'">
+                                </div>
+                                
+                                <div class="gallery-caption-container">
+                                    <h3 class="gallery-caption"><?php echo htmlspecialchars($highlight['title']); ?></h3>
+                                    
+                                    <?php if (!empty($highlight['description'])): ?>
+                                        <p class="gallery-description"><?php echo htmlspecialchars($highlight['description']); ?></p>
                                     <?php endif; ?>
                                     
-                                    <div class="gallery-img-container">
-                                        <img src="<?php echo htmlspecialchars($highlight['image_path']); ?>" 
-                                             alt="<?php echo htmlspecialchars($highlight['title']); ?>"
-                                             loading="lazy"
-                                             onerror="this.src='https://via.placeholder.com/400x220?text=Image+Not+Found'">
-                                    </div>
-                                    
-                                    <div class="gallery-caption-container">
-                                        <h3 class="gallery-caption"><?php echo htmlspecialchars($highlight['title']); ?></h3>
-                                        
-                                        <?php if (!empty($highlight['description'])): ?>
-                                            <p class="gallery-description"><?php echo htmlspecialchars($highlight['description']); ?></p>
+                                    <div class="gallery-meta">
+                                        <?php if (!empty($highlight['category'])): ?>
+                                            <span class="gallery-category"><?php echo htmlspecialchars($highlight['category']); ?></span>
                                         <?php endif; ?>
                                         
-                                        <div class="gallery-meta">
-                                            <?php if (!empty($highlight['category'])): ?>
-                                                <span class="gallery-category"><?php echo htmlspecialchars($highlight['category']); ?></span>
-                                            <?php endif; ?>
-                                            
-                                            <?php if (!empty($highlight['event_date'])): ?>
-                                                <span class="gallery-date">
-                                                    <i class="bi bi-calendar-event"></i>
-                                                    <?php echo date('M j, Y', strtotime($highlight['event_date'])); ?>
-                                                </span>
-                                            <?php endif; ?>
-                                        </div>
+                                        <?php if (!empty($highlight['event_date'])): ?>
+                                            <span class="gallery-date">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <?php echo date('M j, Y', strtotime($highlight['event_date'])); ?>
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                        
-                        <!-- Hidden Items -->
-                        <?php if (!empty($hiddenHighlights)): ?>
-                            <div class="gallery-hidden">
-                                <?php foreach ($hiddenHighlights as $highlight): ?>
-                                    <div class="gallery-item-container">
-                                        <div class="gallery-item" onclick="showHighlightModal(<?php echo $highlight['id']; ?>)">
-                                            <?php if ($highlight['is_featured']): ?>
-                                                <div class="featured-badge">
-                                                    <i class="bi bi-star-fill"></i>
-                                                    Featured
-                                                </div>
+                        </div>
+                    <?php endforeach; ?>
+                    
+                    <!-- Hidden Items -->
+                    <?php if (!empty($hiddenHighlights)): ?>
+                        <div class="gallery-hidden">
+                            <?php foreach ($hiddenHighlights as $highlight): ?>
+                                <div class="gallery-item-container">
+                                    <div class="gallery-item" onclick="showHighlightModal(<?php echo htmlspecialchars(json_encode($highlight)); ?>)">
+                                        <?php if ($highlight['is_featured']): ?>
+                                            <div class="featured-badge">
+                                                <i class="fas fa-star"></i>
+                                                Featured
+                                            </div>
+                                        <?php endif; ?>
+                                        
+                                        <div class="gallery-img-container">
+                                            <?php $imgSrc = getImageSrc($highlight['id']); ?>
+                                            <img src="<?php echo $imgSrc ? $imgSrc : 'https://via.placeholder.com/400x220/800000/ffffff?text=Project+ISSHED'; ?>" 
+                                                 alt="<?php echo htmlspecialchars($highlight['title']); ?>"
+                                                 loading="lazy"
+                                                 onerror="this.src='https://via.placeholder.com/400x220/800000/ffffff?text=Image+Not+Found'">
+                                        </div>
+                                        
+                                        <div class="gallery-caption-container">
+                                            <h3 class="gallery-caption"><?php echo htmlspecialchars($highlight['title']); ?></h3>
+                                            
+                                            <?php if (!empty($highlight['description'])): ?>
+                                                <p class="gallery-description"><?php echo htmlspecialchars($highlight['description']); ?></p>
                                             <?php endif; ?>
                                             
-                                            <div class="gallery-img-container">
-                                                <img src="<?php echo htmlspecialchars($highlight['image_path']); ?>" 
-                                                     alt="<?php echo htmlspecialchars($highlight['title']); ?>"
-                                                     loading="lazy"
-                                                     onerror="this.src='https://via.placeholder.com/400x220?text=Image+Not+Found'">
-                                            </div>
-                                            
-                                            <div class="gallery-caption-container">
-                                                <h3 class="gallery-caption"><?php echo htmlspecialchars($highlight['title']); ?></h3>
-                                                
-                                                <?php if (!empty($highlight['description'])): ?>
-                                                    <p class="gallery-description"><?php echo htmlspecialchars($highlight['description']); ?></p>
+                                            <div class="gallery-meta">
+                                                <?php if (!empty($highlight['category'])): ?>
+                                                    <span class="gallery-category"><?php echo htmlspecialchars($highlight['category']); ?></span>
                                                 <?php endif; ?>
                                                 
-                                                <div class="gallery-meta">
-                                                    <?php if (!empty($highlight['category'])): ?>
-                                                        <span class="gallery-category"><?php echo htmlspecialchars($highlight['category']); ?></span>
-                                                    <?php endif; ?>
-                                                    
-                                                    <?php if (!empty($highlight['event_date'])): ?>
-                                                        <span class="gallery-date">
-                                                            <i class="bi bi-calendar-event"></i>
-                                                            <?php echo date('M j, Y', strtotime($highlight['event_date'])); ?>
-                                                        </span>
-                                                    <?php endif; ?>
-                                                </div>
+                                                <?php if (!empty($highlight['event_date'])): ?>
+                                                    <span class="gallery-date">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        <?php echo date('M j, Y', strtotime($highlight['event_date'])); ?>
+                                                    </span>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
+            </div>
 
-                <?php if (count($highlights) > $visibleCount): ?>
-                    <div class="gallery-btn-container">
-                        <button class="view-more-gallery" onclick="toggleGallery()">
-                            <i class="bi bi-chevron-down"></i>
-                            <span id="viewMoreText">View More Highlights</span>
-                        </button>
-                    </div>
-                <?php endif; ?>
+            <?php if (count($highlights) > $visibleCount): ?>
+                <div class="gallery-btn-container">
+                    <button class="view-more-gallery" onclick="toggleGallery()">
+                        <i class="fas fa-chevron-down"></i>
+                        <span id="viewMoreText">View More Highlights</span>
+                    </button>
+                </div>
             <?php endif; ?>
-        </div>
-    </section>
+        <?php endif; ?>
+    </div>
+</section>
 
-    <!-- Modal for Highlight Details -->
-    <div class="modal fade" id="highlightModal" tabindex="-1" aria-labelledby="highlightModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="highlightModalLabel">Highlight Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal for Highlight Details -->
+<div class="modal fade" id="highlightModal" tabindex="-1" aria-labelledby="highlightModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="highlightModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img id="highlightModalImage" src="" alt="" class="img-fluid rounded mb-3">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="highlight-meta mb-3">
+                            <span id="highlightModalCategory" class="badge me-2" style="background: linear-gradient(135deg, #800000, #a52a2a); color: white;"></span>
+                            <span id="highlightModalDate" class="text-muted"></span>
+                            <div id="highlightModalFeatured" class="mt-2"></div>
+                        </div>
+                        <div id="highlightModalDescription" class="mb-3"></div>
+                    </div>
                 </div>
-                <div class="modal-body" id="modalContent">
-                    <!-- Content will be loaded dynamically -->
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
         
         <!-- Get in touch with us -->
         <section id="be-our-partner" class="py-5" style="background-color: #f5f5f5;">
@@ -1225,50 +1346,6 @@ function animateTimelineItems() {
                                                     <i class="bi bi-telephone-fill me-2" style="color: #006400;"></i>
                                                     <strong style="color: #000;">Contact:</strong>
                                                     <span class="ms-2" style="color: #555;">09675746670</span>
-                                                </div>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="bi bi-clock-fill me-2" style="color: #006400;"></i>
-                                                    <strong style="color: #000;">Response Time:</strong>
-                                                    <span class="ms-2" style="color: #555;">Within 24 hours</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <p class="card-text mb-4 flex-grow-1" style="color: #333; font-size: 1.1rem;">
-                                            Provides technical support in strengthening and sustaining relationships and collaboration of education partners and stakeholders, and mobilizing resources; and providing technical assistance to support special programs and projects towards increasing access to and enhancing the delivery of quality basic education 
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Staff Card 2 -->
-                    <div class="col-xl-10 mt-4">
-                        <div class="card border-0 shadow-lg overflow-hidden" style="border-left: 5px solid #800000;">
-                            <div class="row g-0">
-                                <!-- Image Column -->
-                                <div class="col-md-5">
-                                    <img src="bg_images/pic-rencie-majillo.png" class="img-fluid h-100 object-fit-cover" alt="Rencie O. Majillo" style="min-height: 350px;">
-                                </div>
-                                <!-- Content Column -->
-                                <div class="col-md-7 p-4 p-lg-5 bg-white">
-                                    <div class="card-body h-100 d-flex flex-column">
-                                        <div>
-                                            <h3 class="fw-bold mb-2" style="color: #000;">Rencie O. Majillo</h3>
-                                            <span class="badge mb-3" style="background-color: #800000; color: white; font-size: 1rem;">Education Program Specialist II</span>
-                                            
-                                            <!-- Contact Information Block -->
-                                            <div class="mb-4 p-3 rounded" style="background-color: #f8f8f8; border-left: 3px solid #800000;">
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <i class="bi bi-envelope-fill me-2" style="color: #800000;"></i>
-                                                    <strong style="color: #000;">Email</strong>
-                                                    <span class="ms-2" style="color: #555;">renciemajillo@gmail.com</span>
-                                                </div>
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <i class="bi bi-telephone-fill me-2" style="color: #800000;"></i>
-                                                    <strong style="color: #000;">Phone</strong>
-                                                    <span class="ms-2" style="color: #555;"> 09360544084</span>
                                                 </div>
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi bi-clock-fill me-2" style="color: #800000;"></i>
@@ -1403,190 +1480,211 @@ function animateTimelineItems() {
         </div>
     </footer>
 
-        <script>
+<script>
+// Store highlights data for JavaScript use
+const highlightsData = <?php echo json_encode($highlights); ?>;
 
-        const highlights = <?php echo json_encode($highlights); ?>;
+// Toggle gallery view (show more/less)
+function toggleGallery() {
+    const container = document.getElementById('galleryContainer');
+    const buttonText = document.getElementById('viewMoreText');
+    const chevron = document.querySelector('.view-more-gallery i');
+    
+    if (container.classList.contains('gallery-collapsed')) {
+        // Expand gallery
+        container.classList.remove('gallery-collapsed');
+        container.classList.add('gallery-expanded');
+        buttonText.textContent = 'Show Less Highlights';
+        chevron.style.transform = 'rotate(180deg)';
+        
+        // Animate new items
+        const hiddenItems = document.querySelectorAll('.gallery-hidden .gallery-item-container');
+        hiddenItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    } else {
+        // Collapse gallery
+        container.classList.remove('gallery-expanded');
+        container.classList.add('gallery-collapsed');
+        buttonText.textContent = 'View More Highlights';
+        chevron.style.transform = 'rotate(0deg)';
+        
+        // Scroll back to gallery section
+        document.getElementById('gallery').scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
 
-        function toggleGallery() {
-            const container = document.getElementById('galleryContainer');
-            const viewMoreText = document.getElementById('viewMoreText');
-            const chevron = document.querySelector('.view-more-gallery i');
-            
-            if (container.classList.contains('gallery-collapsed')) {
-                container.classList.remove('gallery-collapsed');
-                container.classList.add('gallery-expanded');
-                viewMoreText.textContent = 'View Less Highlights';
+// Show highlight details in modal
+function showHighlightModal(highlightData) {
+    // Populate modal with data
+    document.getElementById('highlightModalTitle').textContent = highlightData.title;
+    
+    // Set image - try to get from database first
+    const imgElement = document.getElementById('highlightModalImage');
+    
+    // Make AJAX request to get the image
+    fetch('get_highlight_image.php?id=' + highlightData.id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.image_src) {
+                imgElement.src = data.image_src;
             } else {
-                container.classList.remove('gallery-expanded');
-                container.classList.add('gallery-collapsed');
-                viewMoreText.textContent = 'View More Highlights';
-                
-                // Scroll back to gallery section
-                document.getElementById('gallery').scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                imgElement.src = 'https://via.placeholder.com/400x300/800000/ffffff?text=Project+ISSHED';
             }
-        }
-
-        function showHighlightModal(id) {
-            const highlight = highlights.find(h => h.id == id);
-            if (!highlight) return;
-
-            const modalContent = document.getElementById('modalContent');
-            const modalLabel = document.getElementById('highlightModalLabel');
-            
-            modalLabel.textContent = highlight.title;
-            
-            modalContent.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <img src="${highlight.image_path}" 
-                             alt="${highlight.title}" 
-                             class="img-fluid rounded"
-                             onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
-                    </div>
-                    <div class="col-md-6">
-                        <div class="highlight-details">
-                            <h5 class="mb-3">${highlight.title}</h5>
-                            
-                            ${highlight.is_featured ? '<div class="mb-2"><span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> Featured Highlight</span></div>' : ''}
-                            
-                            ${highlight.category ? `<div class="mb-2"><strong>Category:</strong> <span class="badge bg-primary">${highlight.category}</span></div>` : ''}
-                            
-                            ${highlight.event_date ? `<div class="mb-2"><strong>Date:</strong> <i class="bi bi-calendar-event"></i> ${new Date(highlight.event_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>` : ''}
-                            
-                            ${highlight.description ? `<div class="mt-3"><strong>Description:</strong><p class="mt-2 text-muted">${highlight.description}</p></div>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const modal = new bootstrap.Modal(document.getElementById('highlightModal'));
-            modal.show();
-        }
-
-        // Add smooth scrolling for better UX
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate gallery items on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            // Observe all gallery items
-            document.querySelectorAll('.gallery-item-container').forEach(item => {
-                item.style.opacity = '0';
-                item.style.transform = 'translateY(30px)';
-                item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(item);
-            });
+        })
+        .catch(error => {
+            console.error('Error fetching image:', error);
+            imgElement.src = 'https://via.placeholder.com/400x300/800000/ffffff?text=Project+ISSHED';
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        function toggleTimeline() {
-            const currentUrl = new URL(window.location);
-            const showAll = currentUrl.searchParams.get('show_all') === 'true';
-            
-            if (showAll) {
-                currentUrl.searchParams.delete('show_all');
-            } else {
-                currentUrl.searchParams.set('show_all', 'true');
-            }
-            
-            // Show loading state
-            const button = document.getElementById('toggleButton');
-            const originalContent = button.innerHTML;
-            button.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Loading...';
-            button.disabled = true;
-            
-            // Redirect to new URL
-            window.location.href = currentUrl.toString();
-        }
-
-        // Enhanced scroll animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate timeline items on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach((entry, index) => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.classList.add('animate');
-                        }, index * 150); // Staggered animation
-                    }
-                });
-            }, observerOptions);
-
-            // Apply animation to timeline items
-            document.querySelectorAll('.timeline-item').forEach(item => {
-                observer.observe(item);
+    
+    imgElement.alt = highlightData.title;
+    
+    // Set category
+    const categoryElement = document.getElementById('highlightModalCategory');
+    if (highlightData.category) {
+        categoryElement.textContent = highlightData.category;
+        categoryElement.style.display = 'inline-block';
+    } else {
+        categoryElement.style.display = 'none';
+    }
+    
+    // Set date
+    const dateElement = document.getElementById('highlightModalDate');
+    if (highlightData.event_date) {
+        const date = new Date(highlightData.event_date);
+        dateElement.innerHTML = '<i class="fas fa-calendar-alt me-1"></i>' + 
+            date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
             });
+    } else {
+        dateElement.innerHTML = '';
+    }
+    
+    // Set featured badge
+    const featuredElement = document.getElementById('highlightModalFeatured');
+    if (highlightData.is_featured == 1) {
+        featuredElement.innerHTML = '<span class="badge" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333;"><i class="fas fa-star me-1"></i>Featured Highlight</span>';
+    } else {
+        featuredElement.innerHTML = '';
+    }
+    
+    // Set description
+    const descElement = document.getElementById('highlightModalDescription');
+    if (highlightData.description) {
+        descElement.innerHTML = '<strong>Description:</strong><p class="mt-2 text-muted">' + highlightData.description + '</p>';
+    } else {
+        descElement.innerHTML = '';
+    }
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('highlightModal'));
+    modal.show();
+}
 
-            // Add hover effects to cards
-            document.querySelectorAll('.timeline-content .bg-white').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(-4px)';
-                });
-            });
-        });
+// Timeline toggle function
+function toggleTimeline() {
+    const currentUrl = new URL(window.location);
+    const showAll = currentUrl.searchParams.get('show_all') === 'true';
+    
+    if (showAll) {
+        currentUrl.searchParams.delete('show_all');
+    } else {
+        currentUrl.searchParams.set('show_all', 'true');
+    }
+    
+    // Show loading state
+    const button = document.getElementById('toggleButton');
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Loading...';
+    button.disabled = true;
+    
+    // Redirect to new URL
+    window.location.href = currentUrl.toString();
+}
 
-        // Add some interactive feedback
-        document.addEventListener('click', function(e) {
-            if (e.target.matches('img')) {
-                // Simple lightbox effect for images
-                const overlay = document.createElement('div');
-                overlay.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4';
-                overlay.onclick = () => overlay.remove();
-                
-                const img = document.createElement('img');
-                img.src = e.target.src;
-                img.className = 'max-w-full max-h-full rounded-lg shadow-2xl';
-                
-                overlay.appendChild(img);
-                document.body.appendChild(overlay);
+// Enhanced scroll animations and page load functions
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate gallery items on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+                observer.unobserve(entry.target);
             }
         });
-    </script>
+    }, observerOptions);
 
+    // Observe all visible gallery items
+    document.querySelectorAll('.gallery-item-container').forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px)';
+        item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(item);
+    });
 
-</body>
-</html>
+    // Apply animation to timeline items
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        observer.observe(item);
+    });
+
+    // Add hover effects to gallery items
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Add hover effects to timeline cards
+    document.querySelectorAll('.timeline-content .bg-white').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(-4px)';
+        });
+    });
+});
+
+// Add some interactive feedback for images
+document.addEventListener('click', function(e) {
+    if (e.target.matches('img') && !e.target.closest('.modal')) {
+        // Simple lightbox effect for images (excluding modal images)
+        const overlay = document.createElement('div');
+        overlay.className = 'position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
+        overlay.style.zIndex = '9999';
+        overlay.style.cursor = 'pointer';
+        overlay.onclick = () => overlay.remove();
+        
+        const img = document.createElement('img');
+        img.src = e.target.src;
+        img.className = 'img-fluid rounded shadow-lg';
+        img.style.maxWidth = '90%';
+        img.style.maxHeight = '90%';
+        
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+});
+</script>
