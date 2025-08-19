@@ -435,55 +435,28 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <?php 
-                            // Include database connection
-                            require_once '../config/database.php';
-                            $db = new Database();
-                            $conn = $db->getConnection();
-                            
-                            // Get featured news items for the carousel
-                            $query = "SELECT * FROM news_updates 
-                                     ORDER BY is_featured DESC, sort_order, news_date DESC 
-                                     LIMIT 5";
-                            $stmt = $conn->prepare($query);
-                            $stmt->execute();
-                            $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            
+                            // Use the existing $newsItems array from the top of the file
                             if (count($newsItems) > 0) {
                                 $firstItem = true;
                                 foreach ($newsItems as $item): 
                                     $badgeClass = 'badge-' . $item['category'];
                                     $categoryName = ucfirst(str_replace('_', ' ', $item['category']));
+                                    
+                                    // Handle image paths from your database structure
+                                    $imagePath = trim($item['image_url']);
+                                    $defaultImage = 'bg_images/default-news.jpg';
+                                    
+                                    // Determine the final image URL to display
+                                    $imageToShow = (!empty($imagePath) && file_exists($imagePath)) ? $imagePath : $defaultImage;
                             ?>
                             <!-- Slide -->
                             <div class="carousel-item <?= $firstItem ? 'active' : '' ?>">
-                                <?php 
-                                // Handle image paths more robustly
-                                $imagePath = $item['image_url'];
-                                $defaultImage = '../assets/images/default-news.jpg';
-                                
-                                // If image_url is empty, use default
-                                if (empty($imagePath)) {
-                                    $imagePath = $defaultImage;
-                                }
-                                // If it's a relative path, prepend the base URL
-                                elseif (!preg_match('/^(https?:\/\/|\/)/i', $imagePath)) {
-                                    $imagePath = '../' . ltrim($imagePath, './');
-                                }
-                                
-                                // For local files, check existence (skip for URLs)
-                                $imageToShow = $imagePath;
-                                if (!preg_match('/^https?:\/\//i', $imagePath)) {
-                                    $localPath = str_replace('../', '', $imagePath);
-                                    if (!file_exists($localPath)) {
-                                        $imageToShow = $defaultImage;
-                                    }
-                                }
-                                ?>
-                                
                                 <img src="<?= htmlspecialchars($imageToShow) ?>" 
                                     class="d-block w-100 carousel-image" 
                                     alt="<?= htmlspecialchars($item['title']) ?>"
-                                    onerror="this.src='<?= $defaultImage ?>'; this.onerror=null;">
+                                    onerror="this.src='<?= htmlspecialchars($defaultImage) ?>'; this.onerror=null; console.log('Image failed to load:', '<?= htmlspecialchars($imageToShow) ?>');"
+                                    onload="console.log('Image loaded successfully:', this.src)"
+                                    style="height: 400px; object-fit: cover; background-color: #f8f9fa;">
                                 
                                 <div class="carousel-caption-container">
                                     <div class="carousel-overlay"></div>
@@ -504,6 +477,16 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </a>
                                     </div>
                                 </div>
+                                
+                                <!-- Debug info (add ?debug=1 to URL to see this) -->
+                                <?php if (isset($_GET['debug'])): ?>
+                                <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 10px; font-size: 12px; border-radius: 5px; max-width: 300px; z-index: 1000;">
+                                    <strong>Debug Info for Item <?= $item['id'] ?>:</strong><br>
+                                    <strong>Original DB value:</strong> <?= htmlspecialchars($item['image_url']) ?><br>
+                                    <strong>Final image path:</strong> <?= htmlspecialchars($imageToShow) ?><br>
+                                    <strong>Title:</strong> <?= htmlspecialchars($item['title']) ?>
+                                </div>
+                                <?php endif; ?>
                             </div>
                             <?php 
                                     $firstItem = false;
@@ -512,8 +495,8 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 // No news items found - show placeholder
                             ?>
                                 <div class="carousel-item active">
-                                    <div class="text-center p-5 bg-light rounded">
-                                        <div class="py-5">
+                                    <div class="text-center p-5 bg-light rounded" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+                                        <div>
                                             <i class="fas fa-newspaper fa-4x text-muted mb-4"></i>
                                             <h3 class="text-muted">No News Updates Available</h3>
                                             <p class="text-muted">Check back later for the latest news and updates.</p>
