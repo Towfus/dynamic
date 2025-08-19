@@ -83,7 +83,7 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <nav class="navbar navbar-expand-lg fixed-top bg-light shadow-sm">
         <div class="container-fluid">
 
-            <!-- pae title -->
+            <!-- page title -->
             <div class="navbar-brand d-flex flex-column align-items-start">
             <span class="custom-green fw-bold">SDO General Trias</span>
             <span class="text-muted fs-6">Partnership and Linkages</span>
@@ -456,7 +456,7 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     alt="<?= htmlspecialchars($item['title']) ?>"
                                     onerror="this.src='<?= htmlspecialchars($defaultImage) ?>'; this.onerror=null; console.log('Image failed to load:', '<?= htmlspecialchars($imageToShow) ?>');"
                                     onload="console.log('Image loaded successfully:', this.src)"
-                                    style="height: 400px; object-fit: cover; background-color: #f8f9fa;">
+                                    style="height: 600px; object-fit: cover; background-color: #f8f9fa;">
                                 
                                 <div class="carousel-caption-container">
                                     <div class="carousel-overlay"></div>
