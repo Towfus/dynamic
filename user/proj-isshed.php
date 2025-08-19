@@ -5,6 +5,7 @@ $dbname = 'sdo_gentri';
 $username = 'root';
 $password = '';
 
+include 'header-isshed.php';
 try {
     // Create PDO connection
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
@@ -39,6 +40,8 @@ function getImageSrc($id) {
         return '';
     }
 }
+
+
 
 // Function to fetch timeline data from database
 function getTimelineData($pdo) {
@@ -100,7 +103,7 @@ $showAll = isset($_GET['show_all']) && $_GET['show_all'] === 'true';
 $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
 
 // Separate visible and hidden highlights
-$visibleCount = 6; // Show first 6 items by default
+$visibleCount = 2; // Show first 2 items by default
 $visibleHighlights = array_slice($highlights, 0, $visibleCount);
 $hiddenHighlights = array_slice($highlights, $visibleCount);
 ?>
@@ -362,6 +365,12 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
             margin-top: 2rem;
         }
 
+        .view-more-btn {
+            margin-top: 1rem;
+            display: block;
+            text-align: center;
+        }
+
         .view-more-gallery {
             background: linear-gradient(135deg, #800000, #a52a2a);
             color: white;
@@ -497,65 +506,8 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
             transform: translateY(0);
         }
  </style>
-
 </head>
-
 <body>
-  <header>
-      <!-- nav bar -->
-      <nav class="navbar navbar-expand-lg fixed-top bg-light shadow-sm">
-          <div class="container-fluid">
-
-              <!-- pae title -->
-              <div class="navbar-brand d-flex flex-column align-items-start">
-              <span class="custom-green fw-bold">SDO General Trias</span>
-              <span class="text-muted fs-6">Partnership and Linkages</span>
-              </div>
-
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarGenTri" aria-controls="navbarGenTri" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-              </button>
-
-              <!-- search field -->
-              <div class="collapse navbar-collapse justify-content-end" id="navbarGenTri">
-              <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
-
-                  <li class="nav-item d-none d-lg-flex align-items-center px-2">
-                  <div style="height: 24px; border-left: 1px solid #ccc;"></div>
-                  </li>
-
-                  <li class="nav-item">
-                  <a class="nav-link fw-bold" href="index.html">Home</a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link fw-bold" href="proj-isshed.html">Project ISSHED</a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link fw-bold" href="#adopt-a-school">Adopt-a-School</a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link fw-bold" href="#brigada-eskwela">Brigada Eskwela</a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link fw-bold" href="taxIncentives.html">Tax Incentives</a>
-                  </li>
-
-                  <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      More
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="proj-isshed.html#be-our-partner">Be Our Partner</a></li>
-                      <li><a class="dropdown-item" href="index.html#news-partnership-updates">News & Partnership Updates</a></li>
-                      <li><a class="dropdown-item" href="smn-forms.html">SMN Forms</a></li>
-                  </ul>
-                  </li>
-              </ul>
-              </div>
-          </div>
-      </nav>
-  </header>
-
 
     <!-- Logo Section Below Navbar -->
     <section class="logo-section">
@@ -1156,6 +1108,7 @@ function formatDate($dateString) {
 ?>
 
 <!-- Project Highlights Section -->
+<!-- Project Highlights Section -->
 <section id="gallery">
     <div class="section-header text-center">
         <h2>Project Highlights</h2>
@@ -1170,12 +1123,10 @@ function formatDate($dateString) {
                 <p>Check back later for exciting updates from our projects.</p>
             </div>
         <?php else: ?>
-            <div class="gallery-container gallery-collapsed" id="galleryContainer">
+            <div class="gallery-container <?php echo count($highlights) > $visibleCount ? 'gallery-collapsed' : ''; ?>" id="galleryContainer">
                 <div class="gallery-grid" id="galleryGrid">
-                    
-                    <!-- Visible Items -->
-                    <?php foreach ($visibleHighlights as $highlight): ?>
-                        <div class="gallery-item-container">
+                    <?php foreach ($highlights as $index => $highlight): ?>
+                        <div class="gallery-item-container <?php echo $index >= $visibleCount ? 'gallery-hidden' : ''; ?>">
                             <div class="gallery-item" onclick="showHighlightModal(<?php echo htmlspecialchars(json_encode($highlight)); ?>)">
                                 <?php if ($highlight['is_featured']): ?>
                                     <div class="featured-badge">
@@ -1215,67 +1166,87 @@ function formatDate($dateString) {
                             </div>
                         </div>
                     <?php endforeach; ?>
-                    
-                    <!-- Hidden Items -->
-                    <?php if (!empty($hiddenHighlights)): ?>
-                        <div class="gallery-hidden">
-                            <?php foreach ($hiddenHighlights as $highlight): ?>
-                                <div class="gallery-item-container">
-                                    <div class="gallery-item" onclick="showHighlightModal(<?php echo htmlspecialchars(json_encode($highlight)); ?>)">
-                                        <?php if ($highlight['is_featured']): ?>
-                                            <div class="featured-badge">
-                                                <i class="fas fa-star"></i>
-                                                Featured
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <div class="gallery-img-container">
-                                            <?php $imgSrc = getImageSrc($highlight['id']); ?>
-                                            <img src="<?php echo $imgSrc ? $imgSrc : 'https://via.placeholder.com/400x220/800000/ffffff?text=Project+ISSHED'; ?>" 
-                                                 alt="<?php echo htmlspecialchars($highlight['title']); ?>"
-                                                 loading="lazy"
-                                                 onerror="this.src='https://via.placeholder.com/400x220/800000/ffffff?text=Image+Not+Found'">
-                                        </div>
-                                        
-                                        <div class="gallery-caption-container">
-                                            <h3 class="gallery-caption"><?php echo htmlspecialchars($highlight['title']); ?></h3>
-                                            
-                                            <?php if (!empty($highlight['description'])): ?>
-                                                <p class="gallery-description"><?php echo htmlspecialchars($highlight['description']); ?></p>
-                                            <?php endif; ?>
-                                            
-                                            <div class="gallery-meta">
-                                                <?php if (!empty($highlight['category'])): ?>
-                                                    <span class="gallery-category"><?php echo htmlspecialchars($highlight['category']); ?></span>
-                                                <?php endif; ?>
-                                                
-                                                <?php if (!empty($highlight['event_date'])): ?>
-                                                    <span class="gallery-date">
-                                                        <i class="fas fa-calendar-alt"></i>
-                                                        <?php echo date('M j, Y', strtotime($highlight['event_date'])); ?>
-                                                    </span>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
                 </div>
             </div>
 
             <?php if (count($highlights) > $visibleCount): ?>
                 <div class="gallery-btn-container">
-                    <button class="view-more-gallery" onclick="toggleGallery()">
+                    <button class="view-more-gallery" onclick="toggleGallery()" id="galleryToggleButton">
                         <i class="fas fa-chevron-down"></i>
-                        <span id="viewMoreText">View More Highlights</span>
+                        <span id="viewMoreText">View More Highlights (<?php echo count($highlights) - $visibleCount; ?>)</span>
                     </button>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>
+
+<script>
+// Toggle gallery view (show more/less)
+function toggleGallery() {
+    const container = document.getElementById('galleryContainer');
+    const button = document.getElementById('galleryToggleButton');
+    const buttonText = document.getElementById('viewMoreText');
+    const chevron = button.querySelector('i');
+    const hiddenItems = document.querySelectorAll('.gallery-hidden');
+    
+    if (container.classList.contains('gallery-collapsed')) {
+        // Expand gallery - show all items
+        container.classList.remove('gallery-collapsed');
+        buttonText.textContent = 'Show Less Highlights';
+        chevron.classList.remove('fa-chevron-down');
+        chevron.classList.add('fa-chevron-up');
+        
+        // Show all hidden items with animation
+        hiddenItems.forEach((item, index) => {
+            item.classList.remove('gallery-hidden');
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    } else {
+        // Collapse gallery - hide extra items
+        container.classList.add('gallery-collapsed');
+        buttonText.textContent = `View More Highlights (<?php echo count($highlights) - $visibleCount; ?>)`;
+        chevron.classList.remove('fa-chevron-up');
+        chevron.classList.add('fa-chevron-down');
+        
+        // Hide items beyond the visible count
+        const allItems = document.querySelectorAll('.gallery-item-container');
+        allItems.forEach((item, index) => {
+            if (index >= <?php echo $visibleCount; ?>) {
+                item.classList.add('gallery-hidden');
+            }
+        });
+        
+        // Scroll back to gallery section
+        document.getElementById('gallery').scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
+// Initialize gallery items animation
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate initially visible items
+    const visibleItems = document.querySelectorAll('.gallery-item-container:not(.gallery-hidden)');
+    visibleItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
 
 <!-- Modal for Highlight Details -->
 <div class="modal fade" id="highlightModal" tabindex="-1" aria-labelledby="highlightModalLabel" aria-hidden="true">
@@ -1483,42 +1454,6 @@ function formatDate($dateString) {
 <script>
 // Store highlights data for JavaScript use
 const highlightsData = <?php echo json_encode($highlights); ?>;
-
-// Toggle gallery view (show more/less)
-function toggleGallery() {
-    const container = document.getElementById('galleryContainer');
-    const buttonText = document.getElementById('viewMoreText');
-    const chevron = document.querySelector('.view-more-gallery i');
-    
-    if (container.classList.contains('gallery-collapsed')) {
-        // Expand gallery
-        container.classList.remove('gallery-collapsed');
-        container.classList.add('gallery-expanded');
-        buttonText.textContent = 'Show Less Highlights';
-        chevron.style.transform = 'rotate(180deg)';
-        
-        // Animate new items
-        const hiddenItems = document.querySelectorAll('.gallery-hidden .gallery-item-container');
-        hiddenItems.forEach((item, index) => {
-            setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    } else {
-        // Collapse gallery
-        container.classList.remove('gallery-expanded');
-        container.classList.add('gallery-collapsed');
-        buttonText.textContent = 'View More Highlights';
-        chevron.style.transform = 'rotate(0deg)';
-        
-        // Scroll back to gallery section
-        document.getElementById('gallery').scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }
-}
 
 // Show highlight details in modal
 function showHighlightModal(highlightData) {
