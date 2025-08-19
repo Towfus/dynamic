@@ -6,6 +6,8 @@ require_once '../helpers/file_upload.php';
 $db = new Database();
 $conn = $db->getConnection();
 
+include 'admin-header.php'; 
+
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_story'])) {
@@ -107,11 +109,11 @@ $query = "SELECT * FROM impact_stories ORDER BY story_date DESC";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $stories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

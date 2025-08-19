@@ -5,6 +5,8 @@ require_once '../helpers/file_upload.php';
 $db = new Database();
 $conn = $db->getConnection();
 
+include 'admin-header.php'; 
+
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_news'])) {

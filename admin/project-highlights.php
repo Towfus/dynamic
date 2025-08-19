@@ -3,11 +3,10 @@
 session_start();
 require_once '../config/database.php';
 require_once '../helpers/file_upload.php';
-
 $db = new Database();
 $conn = $db->getConnection();
 
-
+include 'admin-header.php';
 
 
 // Handle form submissions

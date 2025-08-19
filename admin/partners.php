@@ -2,9 +2,10 @@
 // Authentication check would go here
 require_once '../config/database.php';
 require_once '../helpers/file_upload.php';
-
 $db = new Database();
 $conn = $db->getConnection();
+
+include 'admin/impact-stories.php';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
