@@ -369,11 +369,6 @@ function isInGroup($pageNames) {
                 <li class="nav-item d-none d-lg-flex align-items-center px-2">
                     <div class="navbar-divider"></div>
                 </li>
-
-                <!-- Additional nav items can be added here if needed -->
-                <li class="nav-item">
-                    <span class="nav-link text-muted">Welcome to Private School Portal</span>
-                </li>
             </ul>
         </div>
     </div>
@@ -398,39 +393,46 @@ function isInGroup($pageNames) {
                     </a>
                 </li>
 
-                <li class="<?php echo isActive('adopt_a_school.php'); ?>">
-                    <a href="proj-isshed.html#adopt-a-school">
+                <li class="<?php echo isActive('proj-isshed.php'); ?>">
+                    <a href="proj-isshed.php#adopt-a-school">
                         <i class="fas fa-bullhorn nav-icon"></i>
                         <span>Adopt A School</span>
                     </a>
                 </li>
 
-                <li class="">
-                    <a href="#brigada-eskwela.php">
+                <li class="<?php echo isActive('proj-isshed.php'); ?>">
+                    <a href="proj-isshed.php#brigada-eskwela">
                         <i class="fas fa-file-text nav-icon"></i>
                         <span>Brigada Eskwela</span>
                     </a>
                 </li>
 
-                <li class="<?php echo isActive('tax_incentives.php'); ?>">
-                    <a href="tax_incentives.php">
+                <li class="<?php echo isActive('taxIncentives.php'); ?>">
+                    <a href="taxIncentives.php">
                         <i class="fas fa-file-alt nav-icon"></i>
                         <span>Tax Incentives</span>
                     </a>
                 </li>
 
-                <div class="menu-category">Partnership and Linkages</div>
+                <div class="menu-category">MORE</div>
                 <li class="<?php echo isActive('Be_our_partner.php'); ?>">
-                    <a href="proj-isshed.html#be-our-partner">
+                    <a href="proj-isshed.php#be-our-partner">
                         <i class="fas fa-home nav-icon"></i>
                         <span>Be Our Partner</span>
                     </a>
                 </li>
 
                 <li class="<?php echo isActive('Be_our_partner.php'); ?>">
-                    <a href="proj-isshed.html#be-our-partner">
-                        <i class="fas fa-home nav-icon"></i>
-                        <span>Home</span>
+                    <a href="smn_document.php">
+                        <i class="fas fa-file-alt nav-icon"></i>
+                        <span>SMN Documents</span>
+                    </a>
+                </li>
+
+                 <li class="<?php echo isActive('Be_our_partner.php'); ?>">
+                    <a href="index.php#news-partnership-updates">
+                        <i class="fas fa-file-alt nav-icon"></i>
+                        <span>News And Partnerships</span>
                     </a>
                 </li>
                 

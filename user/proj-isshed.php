@@ -526,9 +526,6 @@ include 'header.php'; // Include the header with the ISSHED project navigation
     <figcaption class="lead text-green text-center"></figcaption>
 </figure>
 
-
-
-
     <!-- Hero Section -->
     <main class="overall-content">
         <section class="hero">
@@ -1133,7 +1130,6 @@ function formatDate($dateString) {
 ?>
 
 <!-- Project Highlights Section -->
-<!-- Project Highlights Section -->
 <section id="gallery">
     <div class="section-header text-center">
         <h2>Project Highlights</h2>
@@ -1273,35 +1269,35 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Modal for Highlight Details -->
-<div class="modal fade" id="highlightModal" tabindex="-1" aria-labelledby="highlightModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="highlightModalTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <img id="highlightModalImage" src="" alt="" class="img-fluid rounded mb-3">
+        <!-- Modal for Highlight Details -->
+        <div class="modal fade" id="highlightModal" tabindex="-1" aria-labelledby="highlightModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="highlightModalTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="col-md-6">
-                        <div class="highlight-meta mb-3">
-                            <span id="highlightModalCategory" class="badge me-2" style="background: linear-gradient(135deg, #800000, #a52a2a); color: white;"></span>
-                            <span id="highlightModalDate" class="text-muted"></span>
-                            <div id="highlightModalFeatured" class="mt-2"></div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img id="highlightModalImage" src="" alt="" class="img-fluid rounded mb-3">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="highlight-meta mb-3">
+                                    <span id="highlightModalCategory" class="badge me-2" style="background: linear-gradient(135deg, #800000, #a52a2a); color: white;"></span>
+                                    <span id="highlightModalDate" class="text-muted"></span>
+                                    <div id="highlightModalFeatured" class="mt-2"></div>
+                                </div>
+                                <div id="highlightModalDescription" class="mb-3"></div>
+                            </div>
                         </div>
-                        <div id="highlightModalDescription" class="mb-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
         </div>
-    </div>
-</div>
         
         <!-- Get in touch with us -->
         <section id="be-our-partner" class="py-5" style="background-color: #f5f5f5;">

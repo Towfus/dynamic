@@ -39,7 +39,6 @@ $docsResult = $conn->query($docsSql);
 
 
 include 'header.php';
-
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +50,7 @@ include 'header.php';
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
+        body.smn-docs {
             --primary-green: #22c55e;
             --primary-green-dark: #16a34a;
             --primary-green-darker: #15803d;
@@ -82,31 +81,6 @@ include 'header.php';
             min-height: 100vh;
         }
 
-        /* Header Styles */
-        .header {
-            background: var(--background-white);
-            box-shadow: var(--shadow-medium);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .header-top {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
-            color: white;
-            padding: 10px 0;
-            font-size: 0.875rem;
-        }
-
-        .header-top-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 24px;
-        }
 
         .contact-info {
             display: flex;
@@ -664,7 +638,7 @@ include 'header.php';
         }
     </style>
 </head>
-<body>
+<body class="smn-docs">
     <!-- Main Content -->
     <main class="main-container">
         <div class="page-header">
@@ -742,39 +716,51 @@ include 'header.php';
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>About DepEd General Trias</h3>
-                <p>The Schools Division Office of General Trias City is committed to providing quality basic education that is equitable, complete, and liberating through sustainable, transparent and responsive governance.</p>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul class="footer-links">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Programs</a></li>
-                    <li><a href="#">SMN Documents</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Contact Information</h3>
-                <div class="footer-contact">
-                    <p><i class="fas fa-map-marker-alt"></i> J.P. Rizal Street, Brgy. San Francisco, General Trias City, Cavite</p>
-                    <p><i class="fas fa-phone"></i> (046) 509-6873</p>
-                    <p><i class="fas fa-envelope"></i> depedgentri@deped.gov.ph</p>
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="mb-3">SDO General Trias</h5>
+                    <p>Empowering education through strategic partnerships <br> with schools, businesses, and the community.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white"><i class="bi bi-facebook fs-4"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-instagram fs-4"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="proj-isshed.html" class="text-white text-decoration-none">Project ISSHED</a></li>
+                        <li class="mb-2"><a href="proj-isshed.html#adopt-a-school" class="text-white text-decoration-none">Adopt-a-School</a></li>
+                        <li class="mb-2"><a href="taxIncentives.html" class="text-white text-decoration-none">Brigada Eskwela</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="mb-3">Contact</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>General Trias City, Cavite</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>sdo.gentri@deped.gov.ph</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>+63 46 123 4567</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="mb-3">Office Hours</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-clock me-2"></i>Monday-Friday: 8:00 AM - 5:00 PM</li>
+                        <li class="mb-2"><i class="bi bi-clock me-2"></i>Saturday: Closed</li>
+                        <li class="mb-2"><i class="bi bi-clock me-2"></i>Sunday: Closed</li>
+                        <li class="mb-2"><i class="bi bi-exclamation-triangle me-2"></i>Closed on Holidays</li>
+                    </ul>
                 </div>
             </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2023 DepEd Schools Division Office - General Trias City. All rights reserved.</p>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">© 2025 SDO General Trias. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
-
     <script>
         // Search functionality
         document.getElementById('searchInput').addEventListener('keyup', function() {
