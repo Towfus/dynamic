@@ -4,8 +4,6 @@ $host = 'localhost';
 $dbname = 'sdo_gentri';
 $username = 'root';
 $password = '';
-
-include 'header-isshed.php';
 try {
     // Create PDO connection
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
@@ -106,6 +104,7 @@ $displayedItems = $showAll ? $timelineData : array_slice($timelineData, 0, 2);
 $visibleCount = 2; // Show first 2 items by default
 $visibleHighlights = array_slice($highlights, 0, $visibleCount);
 $hiddenHighlights = array_slice($highlights, $visibleCount);
+
 ?>
 
 <!DOCTYPE html>
@@ -512,7 +511,7 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
     <!-- Logo Section Below Navbar -->
     <section class="logo-section">
         <div class="container text-center">
-            <img src="bg_images\div-tri.png" alt="SDO GenTri Logo" class="logo-img">
+            <img src="../bg_images/sdologo.png" alt="SDO GenTri Logo" class="logo-img">
         </div>
     </section>
 
