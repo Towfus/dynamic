@@ -105,6 +105,7 @@ $visibleCount = 2; // Show first 2 items by default
 $visibleHighlights = array_slice($highlights, 0, $visibleCount);
 $hiddenHighlights = array_slice($highlights, $visibleCount);
 
+include 'header.php'; // Include the header with the ISSHED project navigation
 ?>
 
 <!DOCTYPE html>
@@ -116,6 +117,7 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
   <link rel="stylesheet" href="projisshed.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous"> <!-- extension for bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> <!-- search field -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> <!-- nav bar -->
 <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -508,12 +510,24 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
 </head>
 <body>
 
-    <!-- Logo Section Below Navbar -->
-    <section class="logo-section">
-        <div class="container text-center">
-            <img src="../bg_images/sdologo.png" alt="SDO GenTri Logo" class="logo-img">
-        </div>
-    </section>
+<!-- Logo with description -->
+<figure class="isshed-logo my-5 text-center position-relative" style="
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+">
+    <img src="../bg_images/sdologo.png" 
+         alt="Project ISSHED Logo" 
+         class="custom-logo mb-2 with-tooltip" 
+         style="max-width: 100%; height: auto; display: block;" />
+    <figcaption class="lead text-green text-center"></figcaption>
+</figure>
+
+
+
 
     <!-- Hero Section -->
     <main class="overall-content">
@@ -522,21 +536,22 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
                 <h1>Project ISSHED</h1>
                 <p class="hero-subtitle">Implementing Social Services and Health Education for Sustainable Development</p>
             </div>
-        </section>
+            </section>
 
-        <section class="mission-section">
-            <div class="container">
-                <div class="mission-header">
-                <span class="mission-tag">ALIGNED WITH DEPED MATATAG AGENDA</span>
-                <h1 class="mission-title">
-                    Strengthening Philippine <br> Education Through <br>
-                    <span class="text-maroon">Four Instructional Principles (4Is)</span>
-                </h1>
-                <p class="mission-subtitle">
-                    Project ISSHEd fully supports DepEd's transformative MATATAG agenda by aligning its initiatives with efforts to enhance curriculum relevance, improve school facilities, promote learner inclusivity, and uplift teacher welfare for quality basic education. Through these priorities, Project ISSHED creates synergies between health education and sustainable development, supporting DepEd's vision for transformative basic education.
-                </p>
+            <section class="mission-section">
+                <div class="container">
+                    <div class="mission-header">
+                    <span class="mission-tag">ALIGNED WITH DEPED MATATAG AGENDA</span>
+                    <h1 class="mission-title">
+                        Strengthening Philippine <br> Education Through <br>
+                        <span class="text-maroon">Four Instructional Principles (4Is)</span>
+                    </h1>
+                    <p class="mission-subtitle">
+                        Project ISSHEd fully supports DepEd’s transformative MATATAG agenda by aligning its initiatives with efforts to enhance curriculum relevance, improve school facilities, promote learner inclusivity, and uplift teacher welfare for quality basic education. Through these priorities, Project ISSHED creates synergies between health education and sustainable development, supporting DepEd's vision for transformative basic education.
+                    </p>
+                    </div>
                 </div>
-            </div>
+            </section>
         </section>
 
         <!-- Priority Cards -->
@@ -611,11 +626,22 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
                     The Project ISSHED (Innovating and Strengthening Support through Holistic Engagement of DepEd Partners) is the enabling mechanism of the division to strengthen active collaboration with key stakeholders using the multi-sectoral partners to establish the support to the different PPAs of the division. Aside from the integration to the different PPAs of the division, ISSHED has different sub-projects that can be aligned with the implementation of the different activities to achieve the objective of this project. These sub-projects are the creation of PMET (Partnership Monitoring Tool), Brigada Eskwela, the platform for adopting and helping the division and schools, The SEEdS (Sustaining Engagement for Educators and Stakeholders Day) which is through the PMET Tool for easy-to-identify the level of support and involvement of the stakeholder for the betterment of the learners through the various PPAs.
                 </p>
 
-                <!-- Logo with description -->
-                <figure class="isshed-logo my-5 text-center position-relative">
-                    <img src="bg_images/PROJECT ISSHED_1.png" alt="Project ISSHED Logo" class="custom-logo mb-2 with-tooltip" />
-                    <figcaption class="lead text-green text-center">Project ISSHED Logo</figcaption>
-                </figure>
+            <!-- Logo with description -->
+            <figure class="isshed-logo my-5 text-center position-relative" style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                margin: 0 auto;
+            ">
+                <img src="../bg_images/PROJECT ISSHED_1.png" 
+                    alt="Project ISSHED Logo" 
+                    class="custom-logo mb-2 with-tooltip" 
+                    style="max-width: 100%; height: auto; display: block;" />
+                <figcaption class="lead text-green text-center">Project ISSHED Logo</figcaption>
+            </figure>
+
 
                 <p class="lead text-green text-justify mt-4">
                     Project ISSHED (Innovating and Strengthening Support through Holistic Engagement of DepEd Partners) will be a platform for the division to develop monitoring, evaluation, and communication mechanisms in the division/school and develop localized guidelines and manual for partnership in collaboration and implementation in the division/schools through the SEPS-SMN, EPS II-SMN, Education Facilities, PSDS, EPS, ITO, Schools Heads, ASP/BE Coordinators, Stakeholders, and other PPAs proponent. This project will evolve in addressing the needs of the division/schools through the eight (8) forms of support through partnerships. Strengthening these projects will have the division sustainable partners and a partnership support tracking system.
@@ -643,7 +669,7 @@ $hiddenHighlights = array_slice($highlights, $visibleCount);
                     <div class="container text-center">
                         <h2 class="mb-4 text-maroon fw-bold">Project Design</h2>
                         <p class="text-muted mb-4">A visual representation of the project implementation and key components.</p>
-                        <img src="bg_images\ProjectISSHED-Design.png" alt="Project Design" class="img-fluid project-design-img shadow" />
+                        <img src="..\bg_images\ProjectISSHED-Design.png" alt="Project Design" class="img-fluid project-design-img shadow" />
                     </div>
                 </div>
             </div>
@@ -1296,7 +1322,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="row g-0">
                                 <!-- Image Column -->
                                 <div class="col-md-5">
-                                    <img src="bg_images/pic-leah-anne-misenas.png" class="img-fluid h-100 object-fit-cover" alt="Leah Anne A. Misenas" style="min-height: 350px;">
+                                    <img src="../bg_images/pic-leah-anne-misenas.png" class="img-fluid h-100 object-fit-cover" alt="Leah Anne A. Misenas" style="min-height: 350px;">
                                 </div>
                                 <!-- Content Column -->
                                 <div class="col-md-7 p-4 p-lg-5 bg-white">
@@ -1316,6 +1342,50 @@ document.addEventListener('DOMContentLoaded', function() {
                                                     <i class="bi bi-telephone-fill me-2" style="color: #006400;"></i>
                                                     <strong style="color: #000;">Contact:</strong>
                                                     <span class="ms-2" style="color: #555;">09675746670</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-clock-fill me-2" style="color: #006400;"></i>
+                                                    <strong style="color: #000;">Response Time:</strong>
+                                                    <span class="ms-2" style="color: #555;">Within 24 hours</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="card-text mb-4 flex-grow-1" style="color: #333; font-size: 1.1rem;">
+                                            Provides technical support in strengthening and sustaining relationships and collaboration of education partners and stakeholders, and mobilizing resources; and providing technical assistance to support special programs and projects towards increasing access to and enhancing the delivery of quality basic education 
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staff Card 2 -->
+                    <div class="col-xl-10 mt-4">
+                        <div class="card border-0 shadow-lg overflow-hidden" style="border-left: 5px solid #800000;">
+                            <div class="row g-0">
+                                <!-- Image Column -->
+                                <div class="col-md-5">
+                                    <img src="../bg_images/pic-rencie-majillo.png" class="img-fluid h-100 object-fit-cover" alt="Rencie O. Majillo" style="min-height: 350px;">
+                                </div>
+                                <!-- Content Column -->
+                                <div class="col-md-7 p-4 p-lg-5 bg-white">
+                                    <div class="card-body h-100 d-flex flex-column">
+                                        <div>
+                                            <h3 class="fw-bold mb-2" style="color: #000;">Rencie O. Majillo</h3>
+                                            <span class="badge mb-3" style="background-color: #800000; color: white; font-size: 1rem;">Education Program Specialist II</span>
+                                            
+                                            <!-- Contact Information Block -->
+                                            <div class="mb-4 p-3 rounded" style="background-color: #f8f8f8; border-left: 3px solid #800000;">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="bi bi-envelope-fill me-2" style="color: #800000;"></i>
+                                                    <strong style="color: #000;">Email</strong>
+                                                    <span class="ms-2" style="color: #555;">renciemajillo@gmail.com</span>
+                                                </div>
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="bi bi-telephone-fill me-2" style="color: #800000;"></i>
+                                                    <strong style="color: #000;">Phone</strong>
+                                                    <span class="ms-2" style="color: #555;"> 09360544084</span>
                                                 </div>
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi bi-clock-fill me-2" style="color: #800000;"></i>

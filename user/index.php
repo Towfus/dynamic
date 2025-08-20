@@ -51,8 +51,7 @@ $stmt = $conn->prepare($query);
 $stmt->execute();
 $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
-include 'header.php';
+include 'header.php'; // Include the header with the ISSHED project navigation
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +74,7 @@ include 'header.php';
   <!-- Logo Section Below Navbar -->
   <section class="logo-section">
       <div class="container text-center">
-          <img src="bg_images\sdologo.png" alt="SDO GenTri Logo" class="logo-img">
+          <img src="../bg_images/sdologo.png" alt="SDO GenTri Logo" class="logo-img"> 
       </div>
   </section>
 

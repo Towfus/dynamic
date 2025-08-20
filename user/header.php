@@ -383,49 +383,57 @@ function isInGroup($pageNames) {
     <nav class="side-bar">
         <div class="user-p">
             <ul>
-                <div class="menu-category">Dashboard</div>
-                <li class="<?php echo isActive('user_dashboard.php'); ?>">
-                    <a href="user_dashboard.php">
+                <div class="menu-category">SDO General Trias</div>
+                <li class="<?php echo isActive('index.php'); ?>">
+                    <a href="index.php">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+
+                <li class="<?php echo isActive('proj-isshed.php'); ?>">
+                    <a href="proj-isshed.php">
+                        <i class="fas fa-map-marked-alt nav-icon"></i>
+                        <span>Project ISSHED</span>
+                    </a>
+                </li>
+
+                <li class="<?php echo isActive('adopt_a_school.php'); ?>">
+                    <a href="proj-isshed.html#adopt-a-school">
+                        <i class="fas fa-bullhorn nav-icon"></i>
+                        <span>Adopt A School</span>
+                    </a>
+                </li>
+
+                <li class="">
+                    <a href="#brigada-eskwela.php">
+                        <i class="fas fa-file-text nav-icon"></i>
+                        <span>Brigada Eskwela</span>
+                    </a>
+                </li>
+
+                <li class="<?php echo isActive('tax_incentives.php'); ?>">
+                    <a href="tax_incentives.php">
+                        <i class="fas fa-file-alt nav-icon"></i>
+                        <span>Tax Incentives</span>
+                    </a>
+                </li>
+
+                <div class="menu-category">Partnership and Linkages</div>
+                <li class="<?php echo isActive('Be_our_partner.php'); ?>">
+                    <a href="proj-isshed.html#be-our-partner">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>Be Our Partner</span>
+                    </a>
+                </li>
+
+                <li class="<?php echo isActive('Be_our_partner.php'); ?>">
+                    <a href="proj-isshed.html#be-our-partner">
                         <i class="fas fa-home nav-icon"></i>
                         <span>Home</span>
                     </a>
                 </li>
                 
-                <div class="menu-category">Information</div>
-                <li class="<?php echo isActive('barangay.php'); ?>">
-                    <a href="barangay.php">
-                        <i class="fas fa-map-marked-alt nav-icon"></i>
-                        <span>Barangays</span>
-                    </a>
-                </li>
-                
-                <div class="menu-category">Documents & Resources</div>
-                <li class="<?php echo isActive('user_announcement.php'); ?>">
-                    <a href="user_announcement.php">
-                        <i class="fas fa-bullhorn nav-icon"></i>
-                        <span>Announcements</span>
-                    </a>
-                </li>
-                <li class="<?php echo isActive('user_memorandum.php'); ?>">
-                    <a href="user_memorandum.php">
-                        <i class="fas fa-file-text nav-icon"></i>
-                        <span>Memorandums</span>
-                    </a>
-                </li>
-                <li class="<?php echo isActive('user_forms.php'); ?>">
-                    <a href="user_forms.php">
-                        <i class="fas fa-file-alt nav-icon"></i>
-                        <span>Forms & Templates</span>
-                    </a>
-                </li>
-                
-                <div class="menu-category">Processes & Guidance</div>
-                <li class="<?php echo isActive('user_process.php'); ?>">
-                    <a href="user_process.php">
-                        <i class="fas fa-route nav-icon"></i>
-                        <span>Process Flow Guide</span>
-                    </a>
-                </li>
             </ul>
         </div>
     </nav>
