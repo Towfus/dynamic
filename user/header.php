@@ -32,7 +32,7 @@ function isInGroup($pageNames) {
     
     <style>
         :root {
-            --primary-green: #22c55e;
+            --primary-green: #006400;
             --light-green: #86efac;
             --pale-green: #f0fdf4;
             --dark-green: #16a34a;
