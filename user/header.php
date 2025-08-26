@@ -10,6 +10,49 @@ function isInGroup($pageNames) {
     $currentPage = basename($_SERVER['PHP_SELF']);
     return in_array($currentPage, $pageNames) ? 'active-nav' : '';
 }
+
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "sdo_gentri";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Define the upload directory with web-accessible path
+$upload_dir = 'shared/documents/';
+
+function formatSizeUnits($bytes) {
+    if ($bytes >= 1073741824) {
+        $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+    } elseif ($bytes >= 1048576) {
+        $bytes = number_format($bytes / 1048576, 2) . ' MB';
+    } elseif ($bytes >= 1024) {
+        $bytes = number_format($bytes / 1024, 2) . ' KB';
+    } elseif ($bytes > 1) {
+        $bytes = $bytes . ' bytes';
+    } elseif ($bytes == 1) {
+        $bytes = $bytes . ' byte';
+    } else {
+        $bytes = '0 bytes';
+    }
+    return $bytes;
+}
+
+// Set page title if not already set
+if (!isset($pageTitle)) {
+    $pageTitle = "SMN Documents";
+}
+
+if (!isset($additionalCss)) {
+    $additionalCss = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -20,9 +63,10 @@ function isInGroup($pageNames) {
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?>DepEd General Trias City</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <?php if (isset($additionalCss)): ?>
         <?php foreach ($additionalCss as $css): ?>
@@ -32,21 +76,34 @@ function isInGroup($pageNames) {
     
     <style>
         :root {
+            /* Main Color Palette */
             --primary-green: #006400;
+            --primary-green-light: #22c55e;
+            --primary-green-dark: #16a34a;
+            --primary-green-darker: #15803d;
             --light-green: #86efac;
             --pale-green: #f0fdf4;
-            --dark-green: #16a34a;
+            --secondary-green: #dcfce7;
             --accent-green: #4ade80;
+            
+            /* Text Colors */
             --text-dark: #1f2937;
             --text-light: #6b7280;
+            --text-muted: #9ca3af;
+            
+            /* Background Colors */
             --white: #ffffff;
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
             --gray-300: #d1d5db;
+            --background-light: #f8fafc;
+            
+            /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
 
         * {
@@ -55,53 +112,85 @@ function isInGroup($pageNames) {
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, var(--pale-green) 0%, var(--gray-50) 100%);
             min-height: 100vh;
             color: var(--text-dark);
-            padding-top: 80px; /* Account for fixed navbar */
+            padding-top: 80px;
+            line-height: 1.6;
         }
 
-        /* Custom green utility class */
-        .custom-green {
-            color: var(--primary-green) !important;
-        }
-
-        /* Header Styles */
+        /* Header Styles from original design */
         .navbar {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 3px solid var(--primary-green);
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid #218838;
+            backdrop-filter: blur(15px);
             transition: all 0.3s ease;
         }
 
         .navbar-brand {
-            font-weight: 600;
+            font-weight: bold;
         }
 
         .navbar-brand span:first-child {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--primary-green);
+            font-size: 2rem;
+            padding-left: 20px;
+            font-weight: bold;
+            display: block;
         }
 
         .navbar-brand span:last-child {
-            font-size: 0.875rem;
-            color: var(--text-light);
+            font-size: 1rem;
+            padding-left: 20px; 
+            color: #000000;
+            display: block;
+            margin-top: -2px;
         }
 
-        .navbar-toggler {
-            border: 1px solid var(--primary-green);
-            padding: 0.5rem 0.75rem;
+        .custom-green {
+            color: #14740D;
         }
 
-        .navbar-toggler:focus {
-            box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25);
+        .navbar-nav .nav-link {
+            font-weight: 600;
+            font-size: 15px;
+            color: #000000 !important;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
         }
 
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2322c55e' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        .navbar-nav .nav-item {
+            margin-right: 20px; 
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #e6e8e675;
+            color: black !important;
+            border-radius: 5px;
+            transform: scale(1.05);
+        }
+
+        .dropdown-menu {
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .dropdown-menu .dropdown-item {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #000000;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #e6e8e675;
+            color: #000000;
         }
 
         /* Sidebar Toggle Button */
@@ -112,6 +201,7 @@ function isInGroup($pageNames) {
             padding: 0.5rem 0.75rem;
             border-radius: 8px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .sidebar-toggle:hover {
@@ -120,218 +210,23 @@ function isInGroup($pageNames) {
             color: var(--primary-green);
         }
 
-        #checkbox {
-            display: none;
-        }
-
-        /* Body and Navigation */
-        .body {
-            display: flex;
-            min-height: calc(100vh - 80px);
-        }
-
-        .side-bar {
-            width: 280px;
-            background: var(--white);
-            border-left: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.3s ease;
-            position: fixed;
-            top: 80px;
-            right: 0;
-            bottom: 0;
-            overflow-y: auto;
-            z-index: 999;
-        }
-
-        #checkbox:checked ~ .body .side-bar {
-            transform: translateX(100%);
-        }
-
-        .user-p {
-            padding: 2rem 0;
-        }
-
-        .user-p ul {
-            list-style: none;
-        }
-
-        .user-p li {
-            margin-bottom: 0.5rem;
-            padding: 0 1.5rem;
-        }
-
-        .user-p a {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.25rem 1rem 1.5rem;
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--text-light);
-            font-weight: 500;
-            transition: all 0.3s ease, border-left-color 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border-left: 3px solid transparent;
-        }
-
-        .user-p a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .user-p a:hover::before {
-            left: 100%;
-        }
-
-        .user-p a:hover {
-            background: var(--pale-green);
-            color: var(--primary-green);
-            padding-left: 1.5rem;
-            box-shadow: var(--shadow-md);
-            border-left-color: var(--primary-green);
-        }
-
-        .user-p a i {
-            font-size: 1.125rem;
-            width: 24px;
-            text-align: center;
-            color: var(--primary-green);
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-
-        .active-nav a {
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green)) !important;
-            color: var(--white) !important;
-            padding-left: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            border-left-color: var(--white) !important;
-        }
-
-        .active-nav a i {
-            color: var(--white) !important;
-            opacity: 1;
-        }
-
-        /* Navigation Icons */
-        .nav-icon {
-            position: relative;
-        }
-
-        .nav-icon::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            width: 8px;
-            height: 8px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .user-p a:hover .nav-icon::after,
-        .active-nav .nav-icon::after {
-            opacity: 1;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-right: 280px;
-            padding: 2rem;
-            transition: margin-right 0.3s ease;
-            min-height: calc(100vh - 80px);
-        }
-
-        #checkbox:checked ~ .body .main-content {
-            margin-right: 0;
-        }
-
-        /* Menu categories */
-        .menu-category {
-            padding: 1rem 1.5rem 0.5rem;
-            margin-top: 1.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-light);
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 0.5rem;
-        }
-
-        .menu-category:first-child {
-            margin-top: 0;
-        }
-
         /* Responsive Design */
+        @media (max-width: 991px) {
+            .navbar-brand {
+                align-items: flex-start;
+            }
+
+            .navbar-collapse {
+                background-color: #ffffff;
+                padding: 10px 20px;
+                border-top: 1px solid #ddd;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding-top: 76px;
             }
-
-            .side-bar {
-                width: 100%;
-                transform: translateX(100%);
-                top: 76px;
-            }
-
-            #checkbox:checked ~ .body .side-bar {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-right: 0;
-                padding: 1rem;
-            }
-
-            #checkbox:checked ~ .body .main-content {
-                margin-right: 0;
-            }
-        }
-
-        /* Custom Scrollbar */
-        .side-bar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .side-bar::-webkit-scrollbar-track {
-            background: var(--gray-100);
-        }
-
-        .side-bar::-webkit-scrollbar-thumb {
-            background: var(--light-green);
-            border-radius: 3px;
-        }
-
-        .side-bar::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-green);
-        }
-
-        /* Logo images */
-        .logo-republic,
-        .logo-deped {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            filter: drop-shadow(var(--shadow-sm));
-        }
-
-        /* Vertical divider */
-        .navbar-divider {
-            height: 24px; 
-            border-left: 1px solid var(--gray-300);
-            margin: 0 1rem;
         }
     </style>
 </head>
@@ -339,109 +234,70 @@ function isInGroup($pageNames) {
 
 <input type="checkbox" id="checkbox">
 
-<!-- Bootstrap Navbar -->
-<nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+<!-- Bootstrap Navbar from original design -->
+<nav class="navbar navbar-expand-lg fixed-top bg-light shadow-sm">
     <div class="container-fluid">
-        <!-- Sidebar Toggle Button (visible on all screen sizes) -->
-        <div class="d-flex align-items-center order-lg-last">
-            <label for="checkbox" class="sidebar-toggle d-flex align-items-center">
-                <i class="fa fa-bars" aria-hidden="true"></i>
-            </label>
-        </div>
-
         <!-- Brand/Logo Section -->
-        <div class="navbar-brand d-flex align-items-center">
-            <div class="d-flex flex-column align-items-start">
-                <span class="custom-green fw-bold">SDO General Trias</span>
-                <span class="text-muted fs-6">Partnership and Linkages</span>
-            </div>
+        <div class="navbar-brand d-flex flex-column align-items-start">
+            <span class="custom-green fw-bold">SDO General Trias</span>
+            <span class="text-muted fs-6">Partnership and Linkages</span>
         </div>
 
-        <!-- Mobile Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarGenTri" aria-controls="navbarGenTri" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Collapsible Content -->
-        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+        <!-- Search field and navigation -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarGenTri">
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
-                <!-- Vertical Divider (desktop only) -->
+                <li class="nav-item me-3">
+                    <form class="d-flex" role="search">
+                        <div class="input-group">
+                            <input class="form-control" type="search" placeholder="Search..." aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </li>
+
                 <li class="nav-item d-none d-lg-flex align-items-center px-2">
-                    <div class="navbar-divider"></div>
+                    <div style="height: 24px; border-left: 1px solid #ccc;"></div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="proj-isshed.html">Project ISSHED</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="#adopt-a-school">Adopt-a-School</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="#brigada-eskwela">Brigada Eskwela</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="taxIncentives.html">Tax Incentives</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        More
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#be-our-partner">Be Our Partner</a></li>
+                        <li><a class="dropdown-item" href="#news-partnership-updates">News & Partnership Updates</a></li>
+                    </ul>
+                </li>
+
+                <!-- Sidebar Toggle Button -->
+                <li class="nav-item">
+                    <label for="checkbox" class="sidebar-toggle d-flex align-items-center ms-3">
+                        <i class="fa fa-bars" aria-hidden="true"></i>
+                    </label>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
-
-<div class="body">
-    <nav class="side-bar">
-        <div class="user-p">
-            <ul>
-                <div class="menu-category">SDO General Trias</div>
-                <li class="<?php echo isActive('index.php'); ?>">
-                    <a href="index.php">
-                        <i class="fas fa-home nav-icon"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-
-                <li class="<?php echo isActive('proj-isshed.php'); ?>">
-                    <a href="proj-isshed.php">
-                        <i class="fas fa-map-marked-alt nav-icon"></i>
-                        <span>Project ISSHED</span>
-                    </a>
-                </li>
-
-                <li class="<?php echo isActive('proj-isshed.php'); ?>">
-                    <a href="proj-isshed.php#adopt-a-school">
-                        <i class="fas fa-bullhorn nav-icon"></i>
-                        <span>Adopt A School</span>
-                    </a>
-                </li>
-
-                <li class="<?php echo isActive('proj-isshed.php'); ?>">
-                    <a href="proj-isshed.php#brigada-eskwela">
-                        <i class="fas fa-file-text nav-icon"></i>
-                        <span>Brigada Eskwela</span>
-                    </a>
-                </li>
-
-                <li class="<?php echo isActive('taxIncentives.php'); ?>">
-                    <a href="taxIncentives.php">
-                        <i class="fas fa-file-alt nav-icon"></i>
-                        <span>Tax Incentives</span>
-                    </a>
-                </li>
-
-                <div class="menu-category">MORE</div>
-                <li class="<?php echo isActive('Be_our_partner.php'); ?>">
-                    <a href="proj-isshed.php#be-our-partner">
-                        <i class="fas fa-home nav-icon"></i>
-                        <span>Be Our Partner</span>
-                    </a>
-                </li>
-
-                <li class="<?php echo isActive('Be_our_partner.php'); ?>">
-                    <a href="smn_document.php">
-                        <i class="fas fa-file-alt nav-icon"></i>
-                        <span>SMN Documents</span>
-                    </a>
-                </li>
-
-                 <li class="<?php echo isActive('Be_our_partner.php'); ?>">
-                    <a href="index.php#news-partnership-updates">
-                        <i class="fas fa-file-alt nav-icon"></i>
-                        <span>News And Partnerships</span>
-                    </a>
-                </li>
-                
-            </ul>
-        </div>
-    </nav>
-
-    <div class="main-content" id="mainContent">
-        <!-- Page content starts here -->
-
-<!-- Bootstrap JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
