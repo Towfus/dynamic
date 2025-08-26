@@ -118,6 +118,7 @@ include 'header.php'; // Include the header with the ISSHED project navigation
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous"> <!-- extension for bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> <!-- search field -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
     <script>
         tailwind.config = {
             theme: {
@@ -767,20 +768,21 @@ include 'header.php'; // Include the header with the ISSHED project navigation
         </section>
 
 <!-- Project Timeline Section - FIXED VERSION -->
-<div class="min-h-screen py-12 px-4 bg-gray-50">
-    <div class="max-w-6xl mx-auto">
+<!-- Project Timeline Section - FIXED VERSION WITHOUT TAILWIND -->
+<div class="timeline-section">
+    <div class="timeline-container">
         <!-- Header Section -->
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <header class="timeline-header">
+            <h1 class="timeline-main-title">
                 Project ISSHED Timeline
             </h1>
-            <div class="w-32 h-1 bg-gradient-to-r from-green-600 to-blue-600 mx-auto mb-6"></div>
-            <p class="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
+            <div class="timeline-divider"></div>
+            <p class="timeline-subtitle">
                 Documenting our journey from inception to achievement - every milestone, every breakthrough, every step forward
             </p>
             
             <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8 max-w-2xl mx-auto">
+            <div class="timeline-stats">
                 <?php 
                 $statusCounts = [
                     'completed' => count(array_filter($timelineData, fn($item) => $item['category'] === 'completed')),
@@ -793,43 +795,34 @@ include 'header.php'; // Include the header with the ISSHED project navigation
                         'count' => $statusCounts['completed'],
                         'label' => 'Completed',
                         'color' => 'green',
-                        'bg_color' => 'bg-green-100',
-                        'text_color' => 'text-green-600',
-                        'border_color' => 'border-green-500',
                         'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
                     ],
                     [
                         'count' => $statusCounts['in-progress'],
                         'label' => 'In Progress',
                         'color' => 'yellow',
-                        'bg_color' => 'bg-yellow-100',
-                        'text_color' => 'text-yellow-600',
-                        'border_color' => 'border-yellow-500',
                         'icon' => 'M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
                     ],
                     [
                         'count' => $statusCounts['planned'],
                         'label' => 'Planned',
                         'color' => 'blue',
-                        'bg_color' => 'bg-blue-100',
-                        'text_color' => 'text-blue-600',
-                        'border_color' => 'border-blue-500',
                         'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
                     ]
                 ];
                 
                 foreach ($statusCards as $card): 
                 ?>
-                <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 rounded-full <?php echo $card['bg_color']; ?>">
-                            <svg class="w-6 h-6 <?php echo $card['text_color']; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="stat-card stat-card-<?php echo $card['color']; ?>">
+                    <div class="stat-content">
+                        <div class="stat-icon-wrapper stat-icon-<?php echo $card['color']; ?>">
+                            <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<?php echo $card['icon']; ?>"></path>
                             </svg>
                         </div>
-                        <div>
-                            <div class="text-2xl font-bold <?php echo $card['text_color']; ?>"><?php echo $card['count']; ?></div>
-                            <div class="text-sm text-gray-600"><?php echo $card['label']; ?></div>
+                        <div class="stat-info">
+                            <div class="stat-count stat-count-<?php echo $card['color']; ?>"><?php echo $card['count']; ?></div>
+                            <div class="stat-label"><?php echo $card['label']; ?></div>
                         </div>
                     </div>
                 </div>
@@ -839,12 +832,12 @@ include 'header.php'; // Include the header with the ISSHED project navigation
 
         <?php if (empty($timelineData)): ?>
             <!-- Empty State -->
-            <div class="text-center py-16 bg-white rounded-xl shadow-sm">
-                <div class="text-6xl text-gray-300 mb-4" aria-hidden="true">📅</div>
-                <h3 class="text-xl font-semibold text-gray-600 mb-2">No Timeline Events Yet</h3>
-                <p class="text-gray-500 mb-6 max-w-md mx-auto">Timeline events will appear here once they are added through the management interface.</p>
-                <a href="manage_timeline.php" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="timeline-empty">
+                <div class="empty-icon" aria-hidden="true">📅</div>
+                <h3 class="empty-title">No Timeline Events Yet</h3>
+                <p class="empty-description">Timeline events will appear here once they are added through the management interface.</p>
+                <a href="manage_timeline.php" class="empty-action-btn">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Add First Event
@@ -852,99 +845,88 @@ include 'header.php'; // Include the header with the ISSHED project navigation
             </div>
         <?php else: ?>
             <!-- Timeline Container -->
-            <div class="relative" id="timelineContainer">
+            <div class="timeline-wrapper" id="timelineContainer">
                 <!-- Timeline Line -->
-                <div class="timeline-line-bg absolute left-1/2 w-1 bg-gradient-to-b from-green-500 to-blue-500 transform -translate-x-1/2" aria-hidden="true" style="height: 100%; top: 60px;"></div>
+                <div class="timeline-line" aria-hidden="true"></div>
 
                 <!-- Timeline Items -->
-                <div class="space-y-16" id="timelineItems">
+                <div class="timeline-items" id="timelineItems">
                     <?php foreach ($displayedItems as $index => $item): 
                         $position = isset($item['position']) ? $item['position'] : ($index % 2 === 0 ? 'right' : 'left');
                         $isRight = $position === 'right';
                         
                         // Get status colors
-                        $statusColors = [
-                            'completed' => ['bg' => 'bg-green-500', 'text' => 'text-green-800', 'border' => 'border-green-500'],
-                            'in-progress' => ['bg' => 'bg-yellow-500', 'text' => 'text-yellow-800', 'border' => 'border-yellow-500'],
-                            'planned' => ['bg' => 'bg-blue-500', 'text' => 'text-blue-800', 'border' => 'border-blue-500']
-                        ];
-                        
-                        $colors = $statusColors[$item['category']] ?? $statusColors['planned'];
+                        $statusClass = 'status-' . str_replace('-', '_', $item['category']);
                     ?>
-                    <div class="relative timeline-item-wrapper group" data-index="<?php echo $index; ?>">
+                    <div class="timeline-item-wrapper <?php echo $statusClass; ?>" data-index="<?php echo $index; ?>">
                         <!-- Timeline Dot -->
-                        <div class="timeline-dot-wrapper absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white <?php echo $colors['bg']; ?> shadow-md z-10" aria-hidden="true"></div>
+                        <div class="timeline-dot <?php echo $statusClass; ?>" aria-hidden="true"></div>
 
                         <!-- Content Container -->
-                        <div class="timeline-content-wrapper flex flex-col md:flex-row items-center <?php echo $isRight ? 'md:flex-row-reverse' : ''; ?>">
+                        <div class="timeline-content-container <?php echo $isRight ? 'content-right' : 'content-left'; ?>">
                             <!-- Content Card -->
-                            <div class="w-full md:w-5/12 <?php echo $isRight ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'; ?> mt-8 md:mt-0">
-                                <div class="timeline-card bg-white rounded-xl shadow-lg hover:shadow-xl p-6 border-l-4 <?php echo $colors['border']; ?> transition-all duration-300 hover:-translate-y-1">
-                                    <!-- Date and Featured Badge -->
-                                    <div class="flex items-center gap-3 mb-4 <?php echo $isRight ? 'justify-end' : 'justify-start'; ?>">
-                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <span class="text-green-600 font-semibold text-sm">
-                                            <?php 
-                                            if (!empty($item['event_date'])) {
-                                                $date = new DateTime($item['event_date']);
-                                                echo $date->format('M j, Y');
-                                            } else {
-                                                echo 'Date TBD';
-                                            }
-                                            ?>
-                                        </span>
-                                        <?php if (!empty($item['is_featured']) && $item['is_featured']): ?>
-                                        <span class="bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full font-medium">
-                                            ⭐ Featured
-                                        </span>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <!-- Title -->
-                                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 leading-tight">
-                                        <?php echo htmlspecialchars($item['title']); ?>
-                                    </h3>
-
-                                    <!-- Image -->
-                                    <?php if (!empty($item['image_path']) && file_exists($item['image_path'])): ?>
-                                    <div class="mb-4 overflow-hidden rounded-lg">
-                                        <img 
-                                            src="<?php echo htmlspecialchars($item['image_path']); ?>" 
-                                            alt="<?php echo htmlspecialchars($item['title']); ?>"
-                                            class="w-full h-48 md:h-56 object-cover hover:scale-105 transition-transform duration-500"
-                                            loading="lazy"
-                                            onerror="this.onerror=null;this.src='https://via.placeholder.com/400x300/cccccc/666666?text=Image+Not+Available'"
-                                        />
-                                    </div>
+                            <div class="timeline-card">
+                                <!-- Date and Featured Badge -->
+                                <div class="timeline-meta <?php echo $isRight ? 'meta-right' : 'meta-left'; ?>">
+                                    <svg class="date-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="timeline-date">
+                                        <?php 
+                                        if (!empty($item['event_date'])) {
+                                            $date = new DateTime($item['event_date']);
+                                            echo $date->format('M j, Y');
+                                        } else {
+                                            echo 'Date TBD';
+                                        }
+                                        ?>
+                                    </span>
+                                    <?php if (!empty($item['is_featured']) && $item['is_featured']): ?>
+                                    <span class="featured-badge">
+                                        ⭐ Featured
+                                    </span>
                                     <?php endif; ?>
+                                </div>
 
-                                    <!-- Description -->
-                                    <?php if (!empty($item['description'])): ?>
-                                    <div class="text-gray-600 mb-4 leading-relaxed text-base">
-                                        <?php echo nl2br(htmlspecialchars($item['description'])); ?>
-                                    </div>
-                                    <?php endif; ?>
+                                <!-- Title -->
+                                <h3 class="timeline-title">
+                                    <?php echo htmlspecialchars($item['title']); ?>
+                                </h3>
 
-                                    <!-- Status Badge -->
-                                    <div class="flex <?php echo $isRight ? 'justify-end' : 'justify-start'; ?>">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-<?php echo str_replace('bg-', '', str_replace('-500', '-100', $colors['bg'])); ?> <?php echo $colors['text']; ?>">
-                                            <?php 
-                                            $statusIcons = [
-                                                'completed' => '✅',
-                                                'in-progress' => '🔄',
-                                                'planned' => '📋'
-                                            ];
-                                            echo ($statusIcons[$item['category']] ?? '📋') . ' ' . ucfirst(str_replace('-', ' ', $item['category']));
-                                            ?>
-                                        </span>
-                                    </div>
+                                <!-- Image -->
+                                <?php if (!empty($item['image_path']) && file_exists($item['image_path'])): ?>
+                                <div class="timeline-image-wrapper">
+                                    <img 
+                                        src="<?php echo htmlspecialchars($item['image_path']); ?>" 
+                                        alt="<?php echo htmlspecialchars($item['title']); ?>"
+                                        class="timeline-image"
+                                        loading="lazy"
+                                        onerror="this.onerror=null;this.src='https://via.placeholder.com/400x300/cccccc/666666?text=Image+Not+Available'"
+                                    />
+                                </div>
+                                <?php endif; ?>
+
+                                <!-- Description -->
+                                <?php if (!empty($item['description'])): ?>
+                                <div class="timeline-description">
+                                    <?php echo nl2br(htmlspecialchars($item['description'])); ?>
+                                </div>
+                                <?php endif; ?>
+
+                                <!-- Status Badge -->
+                                <div class="timeline-status <?php echo $isRight ? 'status-right' : 'status-left'; ?>">
+                                    <span class="status-badge <?php echo $statusClass; ?>">
+                                        <?php 
+                                        $statusIcons = [
+                                            'completed' => '✅',
+                                            'in-progress' => '🔄',
+                                            'planned' => '📋'
+                                        ];
+                                        echo ($statusIcons[$item['category']] ?? '📋') . ' ' . ucfirst(str_replace('-', ' ', $item['category']));
+                                        ?>
+                                    </span>
                                 </div>
                             </div>
-
-                            <!-- Spacer for desktop -->
-                            <div class="hidden md:block w-2/12"></div>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -953,21 +935,21 @@ include 'header.php'; // Include the header with the ISSHED project navigation
 
             <!-- View All Button -->
             <?php if (count($timelineData) > 2): ?>
-            <div class="text-center mt-16">
+            <div class="timeline-toggle-section">
                 <button 
                     onclick="toggleTimelineView()"
                     id="timelineToggleButton"
                     aria-expanded="<?php echo $showAll ? 'true' : 'false'; ?>"
                     aria-controls="timelineItems"
-                    class="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-lg md:rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    class="timeline-toggle-btn"
                 >
                     <?php if ($showAll): ?>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                         </svg>
                         Show Less
                     <?php else: ?>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                         View All Timeline (<?php echo count($timelineData); ?> events)
@@ -979,13 +961,185 @@ include 'header.php'; // Include the header with the ISSHED project navigation
     </div>
 </div>
 
-<!-- Additional CSS for Timeline -->
 <style>
-.timeline-line-bg {
-    min-height: 500px;
+/* Timeline Section Styles - Pure CSS (No Tailwind) */
+.timeline-section {
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    background-color: #f9fafb;
 }
 
+.timeline-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header Styles */
+.timeline-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.timeline-main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+.timeline-divider {
+    width: 8rem;
+    height: 4px;
+    background: linear-gradient(to right, #059669, #2563eb);
+    margin: 0 auto 1.5rem auto;
+}
+
+.timeline-subtitle {
+    color: #6b7280;
+    font-size: 1.125rem;
+    max-width: 32rem;
+    margin: 0 auto 2rem auto;
+    line-height: 1.6;
+}
+
+/* Statistics Cards */
+.timeline-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 32rem;
+    margin: 0 auto;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.stat-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.stat-icon-wrapper {
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.stat-icon-green { background-color: #dcfce7; }
+.stat-icon-yellow { background-color: #fef3c7; }
+.stat-icon-blue { background-color: #dbeafe; }
+
+.stat-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.stat-icon-wrapper.stat-icon-green .stat-icon { color: #16a34a; }
+.stat-icon-wrapper.stat-icon-yellow .stat-icon { color: #ca8a04; }
+.stat-icon-wrapper.stat-icon-blue .stat-icon { color: #2563eb; }
+
+.stat-count {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.stat-count-green { color: #16a34a; }
+.stat-count-yellow { color: #ca8a04; }
+.stat-count-blue { color: #2563eb; }
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* Empty State */
+.timeline-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.empty-description {
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #059669;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.empty-action-btn:hover {
+    background: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Timeline Wrapper */
+.timeline-wrapper {
+    position: relative;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, #059669 0%, #dc2626 50%, #2563eb 100%);
+    top: 60px;
+}
+
+.timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+/* Timeline Items */
 .timeline-item-wrapper {
+    position: relative;
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -996,62 +1150,269 @@ include 'header.php'; // Include the header with the ISSHED project navigation
     transform: translateY(0);
 }
 
-.timeline-dot-wrapper {
+/* Timeline Dots */
+.timeline-dot {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 10;
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+.timeline-dot.status-completed { background-color: #16a34a; }
+.timeline-dot.status-in_progress { background-color: #eab308; }
+.timeline-dot.status-planned { background-color: #3b82f6; }
+
 @keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: .5;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Content Containers */
+.timeline-content-container {
+    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.content-right {
+    flex-direction: row-reverse;
+}
+
+.content-left {
+    flex-direction: row;
 }
 
 .timeline-card {
-    transform: translateY(0);
+    width: 100%;
+    max-width: 45%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
     transition: all 0.3s ease;
+    position: relative;
+}
+
+.content-right .timeline-card {
+    margin-right: 8%;
+    text-align: right;
+}
+
+.content-left .timeline-card {
+    margin-left: 8%;
+    text-align: left;
 }
 
 .timeline-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+.status-completed .timeline-card { border-left: 4px solid #16a34a; }
+.status-in_progress .timeline-card { border-left: 4px solid #eab308; }
+.status-planned .timeline-card { border-left: 4px solid #3b82f6; }
+
+/* Timeline Meta */
+.timeline-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.meta-right { justify-content: flex-end; }
+.meta-left { justify-content: flex-start; }
+
+.date-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #059669;
+}
+
+.timeline-date {
+    color: #059669;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.featured-badge {
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+
+/* Timeline Title */
+.timeline-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+/* Timeline Image */
+.timeline-image-wrapper {
+    margin-bottom: 1rem;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.timeline-image {
+    width: 100%;
+    height: 14rem;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.timeline-image:hover {
+    transform: scale(1.05);
+}
+
+/* Timeline Description */
+.timeline-description {
+    color: #6b7280;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* Timeline Status */
+.timeline-status {
+    display: flex;
+}
+
+.status-right { justify-content: flex-end; }
+.status-left { justify-content: flex-start; }
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.status-completed {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.status-in_progress {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.status-planned {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* Toggle Button */
+.timeline-toggle-section {
+    text-align: center;
+    margin-top: 4rem;
+}
+
+.timeline-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(to right, #059669, #2563eb);
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-toggle-btn:hover {
+    background: linear-gradient(to right, #047857, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .timeline-line-bg {
-        left: 2rem !important;
+    .timeline-main-title {
+        font-size: 2rem;
     }
-    .timeline-dot-wrapper {
-        left: 2rem !important;
+    
+    .timeline-subtitle {
+        font-size: 1rem;
     }
-    .timeline-content-wrapper {
+    
+    .timeline-stats {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .timeline-line {
+        left: 2rem;
+    }
+    
+    .timeline-dot {
+        left: 2rem;
+    }
+    
+    .timeline-content-container {
+        flex-direction: column !important;
         padding-left: 4rem;
     }
+    
+    .timeline-card {
+        max-width: 100% !important;
+        text-align: left !important;
+        margin: 0 !important;
+    }
+    
+    .timeline-meta {
+        justify-content: flex-start !important;
+    }
+    
+    .timeline-status {
+        justify-content: flex-start !important;
+    }
+    
+    .timeline-toggle-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
 }
 
-/* Fix for Tailwind color classes that might not work */
-.bg-green-100 { background-color: #dcfce7; }
-.bg-yellow-100 { background-color: #fef3c7; }
-.bg-blue-100 { background-color: #dbeafe; }
-.text-green-600 { color: #16a34a; }
-.text-yellow-600 { color: #ca8a04; }
-.text-blue-600 { color: #2563eb; }
-.text-green-800 { color: #166534; }
-.text-yellow-800 { color: #92400e; }
-.text-blue-800 { color: #1e40af; }
-.bg-green-500 { background-color: #22c55e; }
-.bg-yellow-500 { background-color: #eab308; }
-.bg-blue-500 { background-color: #3b82f6; }
-.border-green-500 { border-color: #22c55e; }
-.border-yellow-500 { border-color: #eab308; }
-.border-blue-500 { border-color: #3b82f6; }
+@media (max-width: 480px) {
+    .timeline-section {
+        padding: 2rem 0.5rem;
+    }
+    
+    .timeline-main-title {
+        font-size: 1.75rem;
+    }
+    
+    .timeline-card {
+        padding: 1rem;
+    }
+    
+    .timeline-title {
+        font-size: 1.25rem;
+    }
+}
 </style>
 
-<!-- Updated JavaScript for Timeline -->
 <script>
-// Separate timeline toggle function to avoid conflicts
+// Timeline functionality - keeping all existing JavaScript
 function toggleTimelineView() {
     const currentUrl = new URL(window.location);
     const showAll = currentUrl.searchParams.get('show_all') === 'true';
@@ -1066,7 +1427,7 @@ function toggleTimelineView() {
     const button = document.getElementById('timelineToggleButton');
     if (button) {
         const originalContent = button.innerHTML;
-        button.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div> Loading...';
+        button.innerHTML = '<div style="width: 1.25rem; height: 1.25rem; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div> Loading...';
         button.disabled = true;
     }
     
@@ -1107,6 +1468,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Add spinning animation for loading button
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 <?php 

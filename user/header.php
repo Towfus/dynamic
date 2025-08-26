@@ -266,10 +266,10 @@ if (!isset($additionalCss)) {
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="index.html">Home</a>
+                    <a class="nav-link fw-bold" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="proj-isshed.html">Project ISSHED</a>
+                    <a class="nav-link fw-bold" href="proj-isshed.php">Project ISSHED</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="#adopt-a-school">Adopt-a-School</a>
