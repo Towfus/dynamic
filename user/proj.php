@@ -767,8 +767,8 @@ include 'header.php'; // Include the header with the ISSHED project navigation
             </section>
         </section>
 
-<!-- Project Timeline Section - FIXED VERSION -->
-<!-- Project Timeline Section - FIXED VERSION WITHOUT TAILWIND -->
+<!-- Project Timeline Section -->
+
 <div class="timeline-section">
     <div class="timeline-container">
         <!-- Header Section -->
@@ -776,58 +776,6 @@ include 'header.php'; // Include the header with the ISSHED project navigation
             <h1 class="timeline-main-title">
                 Project ISSHED Timeline
             </h1>
-            <div class="timeline-divider"></div>
-            <p class="timeline-subtitle">
-                Documenting our journey from inception to achievement - every milestone, every breakthrough, every step forward
-            </p>
-            
-            <!-- Statistics Cards -->
-            <div class="timeline-stats">
-                <?php 
-                $statusCounts = [
-                    'completed' => count(array_filter($timelineData, fn($item) => $item['category'] === 'completed')),
-                    'in-progress' => count(array_filter($timelineData, fn($item) => $item['category'] === 'in-progress')),
-                    'planned' => count(array_filter($timelineData, fn($item) => $item['category'] === 'planned'))
-                ];
-                
-                $statusCards = [
-                    [
-                        'count' => $statusCounts['completed'],
-                        'label' => 'Completed',
-                        'color' => 'green',
-                        'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
-                    ],
-                    [
-                        'count' => $statusCounts['in-progress'],
-                        'label' => 'In Progress',
-                        'color' => 'yellow',
-                        'icon' => 'M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                    ],
-                    [
-                        'count' => $statusCounts['planned'],
-                        'label' => 'Planned',
-                        'color' => 'blue',
-                        'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
-                    ]
-                ];
-                
-                foreach ($statusCards as $card): 
-                ?>
-                <div class="stat-card stat-card-<?php echo $card['color']; ?>">
-                    <div class="stat-content">
-                        <div class="stat-icon-wrapper stat-icon-<?php echo $card['color']; ?>">
-                            <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<?php echo $card['icon']; ?>"></path>
-                            </svg>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-count stat-count-<?php echo $card['color']; ?>"><?php echo $card['count']; ?></div>
-                            <div class="stat-label"><?php echo $card['label']; ?></div>
-                        </div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
         </header>
 
         <?php if (empty($timelineData)): ?>
