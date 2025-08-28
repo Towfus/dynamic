@@ -201,6 +201,10 @@ function get_base_url() {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     return $protocol . $_SERVER['HTTP_HOST'] . '/';
 }
+
+$pageTitle = "SMN Documents Management"; // optional, will appear in <title>
+include 'admin.header.php';
+
 ?>
 
 <!DOCTYPE html>
