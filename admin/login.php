@@ -391,12 +391,6 @@ $conn->close();
         <a href="#" class="forgot-password" onclick="openModal()">
             <i class="fas fa-key"></i> Forgot Password?
         </a>
-        
-        <div class="default-info">
-            <strong>Default Admin Credentials:</strong><br>
-            Username: <code>admin</code><br>
-            Password: <code>12345</code>
-        </div>
     </div>
 
     <!-- Password Reset Modal -->
