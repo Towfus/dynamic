@@ -1,12 +1,18 @@
 <?php
 // Authentication check would go here
 session_start();
+
+
+// Redirect to login page if not logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit();
+}
+
 require_once '../config/database.php';
 require_once '../helpers/file_upload.php';
 $db = new Database();
 $conn = $db->getConnection();
-
-include 'admin-header.php';
 
 
 // Handle form submissions
@@ -156,158 +162,607 @@ function getImageSrc($id) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Project Highlights</title>
+    <title>Project Highlights Management - DepEd General Trias City</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-section {
+            margin-bottom: 25px;
+        }
+        
+        .menu-label {
+            padding: 0 20px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 2px 12px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover::before,
+        .sidebar-menu a.active::before {
+            width: 100%;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .sidebar-menu a i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+        
+        .topbar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .hamburger:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -280px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .hamburger {
+                display: block;
+            }
+            .topbar {
+                padding: 15px 20px;
+            }
+        }
+        
+        /* Project Highlights specific styles */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
         .img-thumbnail {
             max-width: 100px;
             height: auto;
+            border-radius: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #1e40af);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #10b981, #059669);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            padding: 1rem;
+        }
+        
+        .table tbody td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 
 <body>
-    <div class="container mt-4">
-        <h1>Manage Project Highlights</h1>
-
-        <!-- Display messages -->
-        <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert alert-success"><?= $_SESSION['message'] ?></div>
-            <?php unset($_SESSION['message']); ?>
-        <?php endif; ?>
-
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
-
-        <!-- Add New Highlight Form -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Add New Highlight</h2>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold">ISSHED</h2>
+                    <p class="text-sm text-blue-200">Project ISSHED</p>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="POST" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="mb-3">
-                                <label for="category" class="form-label">Category</label>
-                                <input type="text" class="form-control" id="category" name="category" required>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="mb-3">
-                                <label for="event_date" class="form-label">Event Date</label>
-                                <input type="date" class="form-control" id="event_date" name="event_date" required>
-                            </div>
-                        </div>
-                    </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-label">Main</div>
+                <a href="admin-landing.php">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Home</span>
+                </a>
+                <a href="statistics.php">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Statistics Management</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-label">Management</div>
+                <a href="impact-stories.php">
+                    <i class="fas fa-users"></i>
+                    <span>Impact Stories Management</span>
+                </a>
+                <a href="admin-document.php">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>SMN Documents</span>
+                </a>
+                <a href="news_updates.php">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News Updates Management</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-label">System</div>
+                <a href="partners.php">
+                    <i class="fas fa-handshake"></i>
+                    <span>Partners</span>
+                </a>
 
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                    </div>
+                <a href="project-highlights.php" class="active">
+                    <i class="fas fa-star"></i>
+                    <span>Project Highlights</span>
+                </a>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="display_order" class="form-label">Display Order</label>
-                                <input type="number" class="form-control" id="display_order" name="display_order" value="1" min="1">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check mb-3 mt-4 pt-3">
-                                <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
-                                <label class="form-check-label" for="is_featured">Featured Highlight</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check mb-3 mt-4 pt-3">
-                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
-                                <label class="form-check-label" for="is_active">Active</label>
-                            </div>
-                        </div>
-                    </div>
+                <a href="timeline-management.php">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Timeline Management</span>
+                </a>
 
-                    <div class="mb-3">
-                        <label for="highlight_image" class="form-label">Highlight Image</label>
-                        <input type="file" class="form-control" id="highlight_image" name="highlight_image" accept="image/*" required>
-                        <small class="text-muted">Recommended size: 800x600 pixels (Max 8MB)</small>
-                    </div>
+                <a href="logout.php">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
-                    <button type="submit" name="add_highlight" class="btn btn-primary">Add Highlight</button>
-                </form>
+    <div class="main-content" id="main-content">
+        <div class="topbar">
+            <div class="flex items-center">
+                <div class="hamburger mr-4" id="hamburger">
+                    <i class="fas fa-bars text-xl"></i>
+                </div>
+                <h1 class="text-xl font-semibold text-gray-800">Project Highlights Management</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="notification-badge cursor-pointer">
+                    <i class="fas fa-bell text-gray-600 text-lg hover:text-blue-600 transition-colors"></i>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        A
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800">Admin User</div>
+                        <div class="text-xs text-gray-500">Administrator</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Highlights List -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Current Highlights</h2>
+        <div class="container mt-4 p-4">
+            <!-- Display messages -->
+            <?php if (isset($_SESSION['message'])): ?>
+                <div class="alert alert-success"><?= $_SESSION['message'] ?></div>
+                <?php unset($_SESSION['message']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <!-- Add New Highlight Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="mb-0 text-xl font-semibold text-gray-800">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Highlight
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    <input type="text" class="form-control" id="category" name="category" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="event_date" class="form-label">Event Date</label>
+                                    <input type="date" class="form-control" id="event_date" name="event_date" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="display_order" class="form-label">Display Order</label>
+                                    <input type="number" class="form-control" id="display_order" name="display_order" value="1" min="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mb-3 mt-4 pt-3">
+                                    <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
+                                    <label class="form-check-label" for="is_featured">Featured Highlight</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mb-3 mt-4 pt-3">
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                    <label class="form-check-label" for="is_active">Active</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="highlight_image" class="form-label">Highlight Image</label>
+                            <input type="file" class="form-control" id="highlight_image" name="highlight_image" accept="image/*" required>
+                            <small class="text-muted">Recommended size: 800x600 pixels (Max 8MB)</small>
+                        </div>
+
+                        <button type="submit" name="add_highlight" class="btn btn-primary">Add Highlight</button>
+                    </form>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Title</th>
-                                <th>Category</th>
-                                <th>Date</th>
-                                <th>Order</th>
-                                <th>Featured</th>
-                                <th>Active</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($highlights as $highlight): ?>
+
+            <!-- Highlights List -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0 text-xl font-semibold text-gray-800">
+                        <i class="bi bi-list-ul me-2"></i>Current Highlights 
+                        <span class="badge bg-primary"><?php echo count($highlights); ?></span>
+                    </h4>
+                </div>
+                <div class="card-body p-0">
+                    <?php if (empty($highlights)): ?>
+                    <div class="text-center py-5">
+                        <i class="bi bi-star display-1 text-muted"></i>
+                        <h5 class="mt-3 text-muted">No Project Highlights Found</h5>
+                        <p class="text-muted">Add your first highlight using the form above.</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <?php $imgSrc = getImageSrc($highlight['id']); ?>
-                                        <?php if ($imgSrc): ?>
-                                            <img src="<?= $imgSrc ?>" alt="Highlight Image" class="img-thumbnail">
-                                        <?php else: ?>
-                                            <span class="text-muted">No image</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><?= htmlspecialchars($highlight['title']) ?></td>
-                                    <td><?= htmlspecialchars($highlight['category']) ?></td>
-                                    <td><?= date('M d, Y', strtotime($highlight['event_date'])) ?></td>
-                                    <td><?= $highlight['display_order'] ?></td>
-                                    <td><?= $highlight['is_featured'] ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?></td>
-                                    <td><?= $highlight['is_active'] ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning edit-btn"
-                                            data-id="<?= $highlight['id'] ?>"
-                                            data-title="<?= htmlspecialchars($highlight['title']) ?>"
-                                            data-description="<?= htmlspecialchars($highlight['description']) ?>"
-                                            data-category="<?= htmlspecialchars($highlight['category']) ?>"
-                                            data-event-date="<?= $highlight['event_date'] ?>"
-                                            data-display-order="<?= $highlight['display_order'] ?>"
-                                            data-is-featured="<?= $highlight['is_featured'] ?>"
-                                            data-is-active="<?= $highlight['is_active'] ?>">
-                                            Edit
-                                        </button>
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="highlight_id" value="<?= $highlight['id'] ?>">
-                                            <button type="submit" name="delete_highlight" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this highlight?')">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </td>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                    <th>Order</th>
+                                    <th>Featured</th>
+                                    <th>Active</th>
+                                    <th>Actions</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($highlights as $highlight): ?>
+                                    <tr>
+                                        <td>
+                                            <?php $imgSrc = getImageSrc($highlight['id']); ?>
+                                            <?php if ($imgSrc): ?>
+                                                <img src="<?= $imgSrc ?>" alt="Highlight Image" class="img-thumbnail">
+                                            <?php else: ?>
+                                                <span class="text-muted">No image</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?= htmlspecialchars($highlight['title']) ?></td>
+                                        <td><?= htmlspecialchars($highlight['category']) ?></td>
+                                        <td><?= date('M d, Y', strtotime($highlight['event_date'])) ?></td>
+                                        <td><span class="badge bg-secondary"><?= $highlight['display_order'] ?></span></td>
+                                        <td><?= $highlight['is_featured'] ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?></td>
+                                        <td><?= $highlight['is_active'] ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-warning edit-btn"
+                                                    data-id="<?= $highlight['id'] ?>"
+                                                    data-title="<?= htmlspecialchars($highlight['title']) ?>"
+                                                    data-description="<?= htmlspecialchars($highlight['description']) ?>"
+                                                    data-category="<?= htmlspecialchars($highlight['category']) ?>"
+                                                    data-event-date="<?= $highlight['event_date'] ?>"
+                                                    data-display-order="<?= $highlight['display_order'] ?>"
+                                                    data-is-featured="<?= $highlight['is_featured'] ?>"
+                                                    data-is-active="<?= $highlight['is_active'] ?>">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <form method="POST" style="display:inline;">
+                                                    <input type="hidden" name="highlight_id" value="<?= $highlight['id'] ?>">
+                                                    <button type="submit" name="delete_highlight" class="btn btn-danger"
+                                                            onclick="return confirm('Are you sure you want to delete this highlight?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -392,6 +847,11 @@ function getImageSrc($id) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Toggle sidebar
+        document.getElementById('hamburger').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
         // Handle edit button clicks
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -417,6 +877,16 @@ function getImageSrc($id) {
                 modal.show();
             });
         });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                if (alert.classList.contains('show')) {
+                    bootstrap.Alert.getOrCreateInstance(alert).close();
+                }
+            });
+        }, 5000);
     </script>
 </body>
 

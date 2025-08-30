@@ -1,4 +1,14 @@
 <?php
+
+// Start session and check if user is logged in
+session_start();
+
+// Redirect to login page if not logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit();
+}
+
 // Authentication check would go here
 require_once '../config/database.php';
 require_once '../helpers/file_upload.php';
@@ -370,20 +380,20 @@ $stories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </a>
             </div>
             
-            <div class="menu-section">
+              <div class="menu-section">
                 <div class="menu-label">System</div>
                 <a href="partners.php">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-handshake"></i>
                     <span>Partners</span>
                 </a>
 
-                <a href="project-highlights.php">
-                    <i class="fas fa-cog"></i>
+               <a href="project-highlights.php">
+                    <i class="fas fa-star"></i>
                     <span>Project Highlights</span>
                 </a>
 
                 <a href="timeline-management.php">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-calendar-alt"></i>
                     <span>Timeline Management</span>
                 </a>
 

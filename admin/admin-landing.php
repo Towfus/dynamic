@@ -1,3 +1,15 @@
+<?php
+// Start session and check if user is logged in
+session_start();
+
+// Redirect to login page if not logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -281,6 +293,16 @@
             --button-color: #6366f1;
             --button-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         }
+
+        .nav-button.teal {
+            --button-color: #14b8a6;
+            --button-gradient: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+        }
+
+        .nav-button.pink {
+            --button-color: #ec4899;
+            --button-gradient: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        }
         
         .button-icon {
             width: 80px;
@@ -392,25 +414,25 @@
                     <span>SMN Documents</span>
                 </a>
                 <a href="news_updates.php">
-                    <i class="fas fa-chart-bar"></i>
+                    <i class="fas fa-newspaper"></i>
                     <span>News Updates Management</span>
                 </a>
             </div>
             
-            <div class="menu-section">
+             <div class="menu-section">
                 <div class="menu-label">System</div>
                 <a href="partners.php">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-handshake"></i>
                     <span>Partners</span>
                 </a>
 
-                <a href="project-highlights.php">
-                    <i class="fas fa-cog"></i>
+               <a href="project-highlights.php">
+                    <i class="fas fa-star"></i>
                     <span>Project Highlights</span>
                 </a>
 
                 <a href="timeline-management.php">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-calendar-alt"></i>
                     <span>Timeline Management</span>
                 </a>
 
@@ -453,52 +475,60 @@
         </div>
 
         <div class="buttons-grid">
-            <a href="admin.announcements.php" class="nav-button blue">
+            <a href="statistics.php" class="nav-button blue">
                 <div class="button-icon">
-                    <i class="fas fa-bullhorn"></i>
+                    <i class="fas fa-chart-bar"></i>
                 </div>
-                <div class="button-title">Announcements</div>
-                <div class="button-description">Create and manage school announcements and important notices</div>
+                <div class="button-title">Statistics Management</div>
+                <div class="button-description">View and manage system statistics, analytics, and performance metrics</div>
             </a>
 
-            <a href="admin.users.php" class="nav-button green">
+            <a href="impact-stories.php" class="nav-button green">
                 <div class="button-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="button-title">User Management</div>
-                <div class="button-description">Manage user accounts, permissions, and access controls</div>
+                <div class="button-title">Impact Stories Management</div>
+                <div class="button-description">Create, edit, and manage impact stories and success narratives</div>
             </a>
 
-            <a href="admin.smn.php" class="nav-button purple">
+            <a href="admin-document.php" class="nav-button purple">
                 <div class="button-icon">
                     <i class="fas fa-file-pdf"></i>
                 </div>
                 <div class="button-title">SMN Documents</div>
-                <div class="button-description">Upload, organize, and manage educational documents and materials</div>
+                <div class="button-description">Upload, organize, and manage SMN educational documents and materials</div>
             </a>
 
-            <a href="admin.reports.php" class="nav-button orange">
+            <a href="news_updates.php" class="nav-button orange">
                 <div class="button-icon">
-                    <i class="fas fa-chart-bar"></i>
+                    <i class="fas fa-newspaper"></i>
                 </div>
-                <div class="button-title">Reports</div>
-                <div class="button-description">Generate and view system usage reports and analytics</div>
+                <div class="button-title">News Updates Management</div>
+                <div class="button-description">Create and manage news updates, announcements, and notifications</div>
             </a>
 
-            <a href="admin.settings.php" class="nav-button indigo">
+            <a href="partners.php" class="nav-button indigo">
                 <div class="button-icon">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-handshake"></i>
                 </div>
-                <div class="button-title">Settings</div>
-                <div class="button-description">Configure system settings and administrative preferences</div>
+                <div class="button-title">Partners</div>
+                <div class="button-description">Manage partner organizations and collaboration relationships</div>
             </a>
 
-            <a href="admin.backup.php" class="nav-button red">
+            <a href="project-highlights.php" class="nav-button red">
                 <div class="button-icon">
-                    <i class="fas fa-database"></i>
+                    <i class="fas fa-star"></i>
                 </div>
-                <div class="button-title">Backup & Security</div>
-                <div class="button-description">Manage system backups and security configurations</div>
+                <div class="button-title">Project Highlights</div>
+                <div class="button-description">Showcase and manage key project achievements and milestones</div>
+            </a>
+
+            <a href="timeline-management.php" class="nav-button teal">
+                <div class="button-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="button-title">Timeline Management</div>
+                <div class="button-description">Create and manage project timelines, schedules, and important dates</div>
             </a>
         </div>
     </div>

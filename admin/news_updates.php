@@ -1,5 +1,18 @@
 <?php
 session_start();
+
+// Redirect to login page if not logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit();
+}
+
+
+
+
+
+
+
 require_once '../config/database.php';
 require_once '../helpers/file_upload.php';
 
