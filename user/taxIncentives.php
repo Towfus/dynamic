@@ -18,6 +18,7 @@
 </head>
 <body>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <main>
     <!-- Logo Section Below Navbar -->
     <section class="logo-section">
@@ -186,7 +187,7 @@
           </div>
           
           <div class="text-center">
-            <a href="proj.php#be-our-partner">
+            <a href="proj-isshed.html#be-our-partner">
               <button class="download-btn">
                 <i class="fas fa-phone"></i>
                 Apply Now?
@@ -219,29 +220,38 @@
             </div>
             <div class="faq-card">
               <div class="faq-header" onclick="toggleFAQ(this)">
-                <h4>What types of donations qualify for tax incentives?</h4>
+                <h4>What law supports the granting of tax incentives for donors?</h4>
                 <i class="fas fa-chevron-down"></i>
               </div>
               <div class="faq-answer">
-                <p>Cash donations, infrastructure projects, educational equipment, teaching materials, and scholarship grants all qualify when given to accredited public schools through the proper channels. All donations must be properly documented and aligned with DepEd's priority needs.</p>
+                <p>The Adopt-a-School Act of 1998 (Republic Act No. 8525) provides the legal basis for granting tax incentives to private sector partners who contribute to the improvement of public education.</p>
               </div>
             </div>
             <div class="faq-card">
               <div class="faq-header" onclick="toggleFAQ(this)">
-                <h4>What types of donations qualify for tax incentives?</h4>
+                <h4>Who are qualified to avail of the tax incentives?</h4>
                 <i class="fas fa-chevron-down"></i>
               </div>
               <div class="faq-answer">
-                <p>Cash donations, infrastructure projects, educational equipment, teaching materials, and scholarship grants all qualify when given to accredited public schools through the proper channels. All donations must be properly documented and aligned with DepEd's priority needs.</p>
+                <p>All private individuals, corporations, foundations, and organizations that extend assistance to public schools through the Adopt-a-School Program.</p>
               </div>
             </div>
             <div class="faq-card">
               <div class="faq-header" onclick="toggleFAQ(this)">
-                <h4>What types of donations qualify for tax incentives?</h4>
+                <h4>What types of assistance or donations are covered?</h4>
                 <i class="fas fa-chevron-down"></i>
               </div>
               <div class="faq-answer">
-                <p>Cash donations, infrastructure projects, educational equipment, teaching materials, and scholarship grants all qualify when given to accredited public schools through the proper channels. All donations must be properly documented and aligned with DepEd's priority needs.</p>
+                <p>Donations can be in the form of infrastructure projects, teaching/learning materials, equipment, training programs, scholarships, and other DepEd-prioritized interventions.</p>
+              </div>
+            </div>
+            <div class="faq-card">
+              <div class="faq-header" onclick="toggleFAQ(this)">
+                <h4>What tax incentive can donors receive?</h4>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Donors may avail of up to 150% tax deduction of the value of their contribution, subject to BIR and DepEd guidelines.</p>
               </div>
             </div>
           </div>
@@ -254,8 +264,8 @@
               <div class="row">
                   <!-- Left Side (Original Contact Info - UNCHANGED) -->
                   <div class="col-lg-6">
-                      <h1 class="mb-4" styles="font-size: 3rem;">Get in Touch</h1>
-                      <p class="reach" styles="font-size: 1.5rem">Reach out for partnerships, inquiries, or support from our team.</p>
+                      <h1 class="mb-4" style="font-size: 3rem;">Get in Touch</h1>
+                      <p class="reach" style="font-size: 1.5rem">Reach out for partnerships, inquiries, or support from our team.</p>
                       
                       <div class="d-flex align-items-start mb-3">
                           <i class="bi bi-geo-alt-fill me-3 fs-4 text-primary"></i>
@@ -269,7 +279,14 @@
                           <i class="bi bi-envelope-fill me-3 fs-4 text-primary"></i>
                           <div>
                               <h5>Email</h5>
-                              <p>division.gentri@deped.gov.ph</p>
+                              <p>
+                                  <!-- Gmail compose link -->
+                                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=division.gentri@deped.gov.ph" 
+                                    target="_blank" 
+                                    class="text-decoration-none text-dark">
+                                    division.gentri@deped.gov.ph
+                                  </a>
+                              </p>
                           </div>
                       </div>
                       
@@ -277,7 +294,10 @@
                           <i class="bi bi-telephone-fill me-3 fs-4 text-primary"></i>
                           <div>
                               <h5>Phone</h5>
-                              <p>(046) 509 1167<br>(046) 431 4275</p>
+                              <p>
+                                  <a href="tel:+63465091167" class="text-decoration-none text-dark">(046) 509 1167</a><br>
+                                  <a href="tel:+63464314275" class="text-decoration-none text-dark">(046) 431 4275</a>
+                              </p>
                           </div>
                       </div>
                   </div>
@@ -321,11 +341,6 @@
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <h5 class="mb-3">SDO General Trias</h5>
                     <p>Empowering education through strategic partnerships <br> with schools, businesses, and the community.</p>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-white"><i class="bi bi-facebook fs-4"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-twitter fs-4"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-instagram fs-4"></i></a>
-                    </div>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
                     <h5 class="mb-3">Quick Links</h5>
@@ -336,14 +351,28 @@
                         <li class="mb-2"><a href="taxIncentives.html" class="text-white text-decoration-none">Brigada Eskwela</a></li>
                     </ul>
                 </div>
+
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
                     <h5 class="mb-3">Contact</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>General Trias City, Cavite</li>
-                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>sdo.gentri@deped.gov.ph</li>
-                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>+63 46 123 4567</li>
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt me-2"></i>General Trias City, Cavite
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sdo.gentri@deped.gov.ph" 
+                              target="_blank" 
+                              class="text-decoration-none text-white">
+                              sdo.gentri@deped.gov.ph
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:+63461234567" class="text-decoration-none text-white">(046) 509 1167</a>
+                        </li>
                     </ul>
                 </div>
+
                 <div class="col-lg-3">
                     <h5 class="mb-3">Office Hours</h5>
                     <ul class="list-unstyled">
@@ -361,6 +390,47 @@
         </div>
     </footer>
 
-<script src="tax-incentives.js"></script>
+<script>
+
+  
+// Toggle FAQ answer visibility
+function toggleFAQ(element) {
+  const card = element.parentElement;
+  const answer = card.querySelector('.faq-answer');
+  const icon = element.querySelector('i');
+
+  // Close all other FAQ cards
+  const allCards = document.querySelectorAll('.faq-card');
+  allCards.forEach(otherCard => {
+    if (otherCard !== card) {
+      otherCard.querySelector('.faq-answer').style.maxHeight = null;
+      const otherIcon = otherCard.querySelector('.faq-header i');
+      otherIcon.classList.remove('fa-chevron-up');
+      otherIcon.classList.add('fa-chevron-down');
+    }
+  });
+
+  // Toggle current FAQ card
+  const isExpanded = answer.style.maxHeight;
+
+  if (isExpanded) {
+    answer.style.maxHeight = null;
+    icon.classList.remove('fa-chevron-up');
+    icon.classList.add('fa-chevron-down');
+  } else {
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+    icon.classList.remove('fa-chevron-down');
+    icon.classList.add('fa-chevron-up');
+  }
+}
+
+// Initialize all FAQ answers as collapsed on page load
+document.addEventListener('DOMContentLoaded', function () {
+  const faqAnswers = document.querySelectorAll('.faq-answer');
+  faqAnswers.forEach(answer => {
+    answer.style.maxHeight = '0';
+  });
+});
+</script>
 </body>
 </html>

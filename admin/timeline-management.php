@@ -524,45 +524,44 @@ if (isset($_GET['edit'])) {
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Home</span>
                 </a>
-                <a href="statistics.php">
+
+                 <a href="statistics.php">
                     <i class="fas fa-chart-bar"></i>
                     <span>Statistics Management</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <div class="menu-label">Management</div>
-                <a href="impact-stories.php">
+                </a> 
+
+                   <a href="impact-stories.php">
                     <i class="fas fa-users"></i>
                     <span>Impact Stories Management</span>
                 </a>
-                <a href="admin-document.php">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>SMN Documents</span>
-                </a>
-                <a href="news_updates.php">
-                    <i class="fas fa-newspaper"></i>
-                    <span>News Updates Management</span>
+
+                
+                 <a href="partners.php">
+                    <i class="fas fa-handshake"></i>
+                    <span>Partners</span>
                 </a>
             </div>
             
             <div class="menu-section">
-                <div class="menu-label">System</div>
-                <a href="partners.php">
-                    <i class="fas fa-handshake"></i>
-                    <span>Partners</span>
-                </a>
-
-                <a href="project-highlights.php">
-                    <i class="fas fa-star"></i>
-                    <span>Project Highlights</span>
-                </a>
+                <div class="menu-label">Proj ISSHED</div>
 
                 <a href="timeline-management.php" class="active">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Timeline Management</span>
                 </a>
 
+                <a href="project-highlights.php">
+                    <i class="fas fa-star"></i>
+                    <span>Project Highlights</span>
+                </a>
+                <a href="admin-document.php">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>SMN Documents</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-label">System</div>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>

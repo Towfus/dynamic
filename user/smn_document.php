@@ -111,6 +111,7 @@ $additionalCss = [];
 
         html, body {
             overflow-x: hidden;
+            height: 100%;
         }
 
         body {
@@ -120,6 +121,8 @@ $additionalCss = [];
             color: var(--text-dark);
             padding-top: 80px;
             line-height: 1.6;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Header Styles from original design */
@@ -192,8 +195,12 @@ $additionalCss = [];
 
         /* Main Content - Adjusted for no sidebar */
         .main-content {
-            padding: 2rem;
-            min-height: calc(100vh - 80px);
+            flex: 1;
+            width: 100%;
+            padding: 2rem 1rem;
+        }
+
+        .content-container {
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
@@ -202,9 +209,9 @@ $additionalCss = [];
         /* Page Header */
         .page-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             background: var(--white);
-            padding: 3rem 2rem;
+            padding: 2rem;
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--gray-200);
@@ -302,24 +309,22 @@ $additionalCss = [];
         /* Documents Grid */
         .documents-grid {
             padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
         }
 
         .document-card {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
             padding: 1.25rem;
-            margin-bottom: 1rem;
             background: var(--white);
             border: 1px solid var(--gray-200);
             border-radius: 8px;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
-        }
-
-        .document-card:last-child {
-            margin-bottom: 0;
+            height: 100%;
         }
 
         .document-card:hover {
@@ -332,7 +337,7 @@ $additionalCss = [];
         .document-info {
             flex: 1;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 1rem;
         }
 
@@ -365,6 +370,7 @@ $additionalCss = [];
             flex-wrap: wrap;
             gap: 0.75rem;
             align-items: center;
+            margin-bottom: 1rem;
         }
 
         .document-meta span {
@@ -379,12 +385,14 @@ $additionalCss = [];
             color: var(--text-muted);
             font-size: 0.875rem;
             line-height: 1.5;
+            margin-bottom: 1rem;
         }
 
         .document-actions {
             display: flex;
             gap: 0.5rem;
             flex-shrink: 0;
+            margin-top: auto;
         }
 
         .action-btn {
@@ -400,6 +408,8 @@ $additionalCss = [];
             border: none;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
+            flex: 1;
+            justify-content: center;
         }
 
         .view-btn {
@@ -431,6 +441,7 @@ $additionalCss = [];
             text-align: center;
             padding: 3rem 2rem;
             color: var(--text-light);
+            grid-column: 1 / -1;
         }
 
         .empty-state i {
@@ -455,6 +466,7 @@ $additionalCss = [];
         footer {
             background: var(--text-dark) !important;
             margin-top: 3rem;
+            width: 100%;
         }
 
         footer a {
@@ -531,25 +543,12 @@ $additionalCss = [];
                 padding: 1rem;
             }
             
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+            
             .document-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
                 padding: 1rem;
-            }
-            
-            .document-info {
-                width: 100%;
-            }
-            
-            .document-actions {
-                width: 100%;
-                justify-content: stretch;
-            }
-            
-            .action-btn {
-                flex: 1;
-                justify-content: center;
             }
         }
 
@@ -605,13 +604,13 @@ $additionalCss = [];
                     <a class="nav-link fw-bold <?php echo isActive('index.php'); ?>" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold <?php echo isActive('proj-isshed.php'); ?>" href="proj-isshed.php">Project ISSHED</a>
+                    <a class="nav-link fw-bold <?php echo isActive('proj.php'); ?>" href="proj.php">Project ISSHED</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="proj-isshed.php#adopt-a-school">Adopt-a-School</a>
+                    <a class="nav-link fw-bold" href="proj.php#adopt-a-school">Adopt-a-School</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="proj-isshed.php#brigada-eskwela">Brigada Eskwela</a>
+                    <a class="nav-link fw-bold" href="proj.php#brigada-eskwela">Brigada Eskwela</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold <?php echo isActive('taxIncentives.php'); ?>" href="taxIncentives.php">Tax Incentives</a>
@@ -622,7 +621,7 @@ $additionalCss = [];
                         More
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="proj-isshed.php#be-our-partner">Be Our Partner</a></li>
+                        <li><a class="dropdown-item" href="proj.php#be-our-partner">Be Our Partner</a></li>
                         <li><a class="dropdown-item <?php echo isActive('smn_document.php'); ?>" href="smn_document.php">SMN Documents</a></li>
                         <li><a class="dropdown-item" href="index.php#news-partnership-updates">News & Partnership Updates</a></li>
                     </ul>
@@ -634,81 +633,83 @@ $additionalCss = [];
 </nav>
 
 <div class="main-content" id="mainContent">
-    <!-- Page content starts here -->
-    <main class="main-container">
-        <div class="page-header">
-            <h1>SMN Documents Repository</h1>
-            <p>Access, view, and download all official SMN documents from our comprehensive repository</p>
-        </div>
-
-        <div class="documents-section">
-            <div class="documents-header">
-                <h2>Official SMN Documents</h2>
-                <p>Find and download the SMN forms and documents you need. Our repository contains the most up-to-date versions of all official forms. If you need assistance or can't find what you're looking for, please don't hesitate to contact us.</p>
+    <div class="content-container">
+        <!-- Page content starts here -->
+        <main class="main-container">
+            <div class="page-header">
+                <h1>SMN Documents Repository</h1>
+                <p>Access, view, and download all official SMN documents from our comprehensive repository</p>
             </div>
 
-            <div class="search-section">
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="Search documents by title or description...">
+            <div class="documents-section">
+                <div class="documents-header">
+                    <h2>Official SMN Documents</h2>
+                    <p>Find and download the SMN forms and documents you need. Our repository contains the most up-to-date versions of all official forms. If you need assistance or can't find what you're looking for, please don't hesitate to contact us.</p>
+                </div>
+
+                <div class="search-section">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search documents by title or description...">
+                    </div>
+                </div>
+
+                <div class="documents-grid" id="documentsGrid">
+                    <?php if ($docsResult && $docsResult->num_rows > 0): ?>
+                        <?php while ($row = $docsResult->fetch_assoc()): ?>
+                        <?php
+                        // Get file information
+                        $file_path = $row['file_path'];
+                        $file_info = pathinfo($file_path);
+                        $file_ext = isset($file_info['extension']) ? strtoupper($file_info['extension']) : 'PDF';
+                        
+                        // Get file size if file exists
+                        $full_path = $_SERVER['DOCUMENT_ROOT'] . '/' . $file_path;
+                        $file_size = file_exists($full_path) ? formatSizeUnits(filesize($full_path)) : 'N/A';
+                        
+                        // Format date
+                        $upload_date = date('M d, Y', strtotime($row['upload_date']));
+                        ?>
+                        <div class="document-card" data-title="<?php echo strtolower(htmlspecialchars($row['title'])); ?>" data-description="<?php echo strtolower(htmlspecialchars($row['description'] ?? '')); ?>">
+                            <div class="document-info">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="document-details">
+                                    <h3 class="document-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                                    <div class="document-meta">
+                                        <span><i class="fas fa-calendar-alt"></i> <?php echo $upload_date; ?></span>
+                                        <span><i class="fas fa-hdd"></i> <?php echo $file_size; ?></span>
+                                        <span><i class="fas fa-file"></i> <?php echo $file_ext; ?></span>
+                                    </div>
+                                    <?php if (!empty($row['description'])): ?>
+                                        <div class="document-description"><?php echo htmlspecialchars($row['description']); ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="document-actions">
+                                <a href="/<?php echo $file_path; ?>" target="_blank" class="action-btn view-btn">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </a>
+                                <a href="/<?php echo $file_path; ?>" download class="action-btn download-btn">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </a>
+                            </div>
+                        </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>No Documents Available</h3>
+                            <p>There are currently no SMN documents in the repository. Please check back later or contact us for assistance.</p>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
-
-            <div class="documents-grid" id="documentsGrid">
-                <?php if ($docsResult && $docsResult->num_rows > 0): ?>
-                    <?php while ($row = $docsResult->fetch_assoc()): ?>
-                    <?php
-                    // Get file information
-                    $file_path = $row['file_path'];
-                    $file_info = pathinfo($file_path);
-                    $file_ext = isset($file_info['extension']) ? strtoupper($file_info['extension']) : 'PDF';
-                    
-                    // Get file size if file exists
-                    $full_path = $_SERVER['DOCUMENT_ROOT'] . '/' . $file_path;
-                    $file_size = file_exists($full_path) ? formatSizeUnits(filesize($full_path)) : 'N/A';
-                    
-                    // Format date
-                    $upload_date = date('M d, Y', strtotime($row['upload_date']));
-                    ?>
-                    <div class="document-card" data-title="<?php echo strtolower(htmlspecialchars($row['title'])); ?>" data-description="<?php echo strtolower(htmlspecialchars($row['description'] ?? '')); ?>">
-                        <div class="document-info">
-                            <div class="document-icon">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <div class="document-details">
-                                <h3 class="document-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                                <div class="document-meta">
-                                    <span><i class="fas fa-calendar-alt"></i> <?php echo $upload_date; ?></span>
-                                    <span><i class="fas fa-hdd"></i> <?php echo $file_size; ?></span>
-                                    <span><i class="fas fa-file"></i> <?php echo $file_ext; ?></span>
-                                </div>
-                                <?php if (!empty($row['description'])): ?>
-                                    <div class="document-description"><?php echo htmlspecialchars($row['description']); ?></div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="document-actions">
-                            <a href="/<?php echo $file_path; ?>" target="_blank" class="action-btn view-btn">
-                                <i class="fas fa-eye"></i>
-                                View
-                            </a>
-                            <a href="/<?php echo $file_path; ?>" download class="action-btn download-btn">
-                                <i class="fas fa-download"></i>
-                                Download
-                            </a>
-                        </div>
-                    </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <div class="empty-state">
-                        <i class="fas fa-folder-open"></i>
-                        <h3>No Documents Available</h3>
-                        <p>There are currently no SMN documents in the repository. Please check back later or contact us for assistance.</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-dark text-white py-5 mt-5">

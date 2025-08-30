@@ -112,13 +112,13 @@ include 'header.php'; // Include the header with the ISSHED project navigation
       <div class="row justify-content-center g-4">
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
-            <img src="https://placehold.co/600x400?text=Project+ISSHED" class="card-img-top" alt="Students in a modern classroom with digital learning tools">
+            <img src="..\bg_images\PROJECT ISSHED_1.png" class="card-img-top" alt="Students in a modern classroom with digital learning tools">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-success fw-bold">Project ISSHED</h5>
               <p class="card-text text-muted flex-grow-1">
                 Infrastructure Support for School and Home Education Development
               </p>
-              <a href="proj-isshed.html#about-project-isshed" class="text-success fw-medium d-inline-flex align-items-center mt-2 icon-link" style="text-decoration: underline; text-decoration-color: #006400;">
+              <a href="proj.php#about-project-isshed" class="text-success fw-medium d-inline-flex align-items-center mt-2 icon-link" style="text-decoration: underline; text-decoration-color: #006400;">
                 Learn More
                 <svg xmlns="http://www.w3.org/2000/svg" class="bi ms-2" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                   <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
@@ -130,13 +130,13 @@ include 'header.php'; // Include the header with the ISSHED project navigation
 
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
-            <img src="https://placehold.co/600x400?text=Adopt-a-School" class="card-img-top" alt="Volunteer painting school walls during community service day">
+            <img src="..\bg_images\News and Highlights\aas1.jpg" class="card-img-top" alt="Volunteer painting school walls during community service day">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-success fw-bold">Adopt-a-School</h5>
               <p class="card-text text-muted flex-grow-1">
                 Private sector partnership for infrastructure and capacity building
               </p>
-              <a href="proj-isshed.html#adopt-a-school" class="text-success fw-medium d-inline-flex align-items-center mt-2 icon-link" style="text-decoration: underline; text-decoration-color: #006400;">
+              <a href="proj.php#adopt-a-school" class="text-success fw-medium d-inline-flex align-items-center mt-2 icon-link" style="text-decoration: underline; text-decoration-color: #006400;">
                 Learn More
                 <svg xmlns="http://www.w3.org/2000/svg" class="bi ms-2" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                   <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
@@ -154,7 +154,7 @@ include 'header.php'; // Include the header with the ISSHED project navigation
               <p class="card-text text-muted flex-grow-1">
                 Annual school maintenance program through community involvement
               </p>
-              <a href="proj-isshed.html#brigada-eskwela" class="text-success fw-medium d-inline-flex align-items-center mt-2 icon-link" style="text-decoration: underline; text-decoration-color: #006400;">
+              <a href="proj.php#brigada-eskwela" class="text-success fw-medium d-inline-flex align-items-center mt-2 icon-link" style="text-decoration: underline; text-decoration-color: #006400;">
                 Learn More
                 <svg xmlns="http://www.w3.org/2000/svg" class="bi ms-2" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                   <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
@@ -387,6 +387,10 @@ include 'header.php'; // Include the header with the ISSHED project navigation
                                     
                                     // Determine the final image URL to display
                                     $imageToShow = (!empty($imagePath) && file_exists($imagePath)) ? $imagePath : $defaultImage;
+
+                                    // --- NEW: external link from DB column `full_content` (must be a valid URL)
+                                    $externalLinkRaw = isset($item['full_content']) ? trim($item['full_content']) : '';
+                                    $externalLink = filter_var($externalLinkRaw, FILTER_VALIDATE_URL) ? $externalLinkRaw : '';
                             ?>
                             <!-- Slide -->
                             <div class="carousel-item <?= $firstItem ? 'active' : '' ?>">
@@ -411,9 +415,12 @@ include 'header.php'; // Include the header with the ISSHED project navigation
                                         <p class="news-excerpt">
                                             <?= htmlspecialchars(substr($item['excerpt'], 0, 150)) ?><?= strlen($item['excerpt']) > 150 ? '...' : '' ?>
                                         </p>
-                                        <a href="news_details.php?id=<?= $item['id'] ?>" class="read-more-link">
-                                            Read More <i class="fas fa-arrow-right ms-2"></i>
-                                        </a>
+
+                                        <?php if (!empty($externalLink)): ?>
+                                            <a href="<?= htmlspecialchars($externalLink) ?>" class="read-more-link" target="_blank" rel="noopener noreferrer">
+                                                Read More <i class="fas fa-arrow-right ms-2"></i>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 
@@ -421,9 +428,11 @@ include 'header.php'; // Include the header with the ISSHED project navigation
                                 <?php if (isset($_GET['debug'])): ?>
                                 <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 10px; font-size: 12px; border-radius: 5px; max-width: 300px; z-index: 1000;">
                                     <strong>Debug Info for Item <?= $item['id'] ?>:</strong><br>
-                                    <strong>Original DB value:</strong> <?= htmlspecialchars($item['image_url']) ?><br>
+                                    <strong>Original DB value (image_url):</strong> <?= htmlspecialchars($item['image_url']) ?><br>
                                     <strong>Final image path:</strong> <?= htmlspecialchars($imageToShow) ?><br>
-                                    <strong>Title:</strong> <?= htmlspecialchars($item['title']) ?>
+                                    <strong>Title:</strong> <?= htmlspecialchars($item['title']) ?><br>
+                                    <strong>External link (full_content):</strong> <?= htmlspecialchars($externalLinkRaw) ?><br>
+                                    <strong>Validated link used:</strong> <?= htmlspecialchars($externalLink) ?>
                                 </div>
                                 <?php endif; ?>
                             </div>
@@ -475,6 +484,7 @@ include 'header.php'; // Include the header with the ISSHED project navigation
         </div>
     </div>
 </section>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

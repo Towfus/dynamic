@@ -2,13 +2,11 @@
 // Authentication check would go here
 session_start();
 
-
 // Redirect to login page if not logged in
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit();
 }
-
 
 require_once '../config/database.php';
 
@@ -469,45 +467,44 @@ $statistics = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Home</span>
                 </a>
-                <a href="statistics.php" class="active">
-                    <i class="fas fa-chart-bar"></i>
+
+                 <a href="statistics.php">
+                    <i class="fas fa-chart-bar" class="active"></i>
                     <span>Statistics Management</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <div class="menu-label">Management</div>
-                <a href="impact-stories.php">
+                </a> 
+
+                   <a href="impact-stories.php">
                     <i class="fas fa-users"></i>
                     <span>Impact Stories Management</span>
                 </a>
-                <a href="admin-document.php">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>SMN Documents</span>
-                </a>
-                <a href="news_updates.php">
-                    <i class="fas fa-newspaper"></i>
-                    <span>News Updates Management</span>
+
+                
+                 <a href="partners.php">
+                    <i class="fas fa-handshake"></i>
+                    <span>Partners</span>
                 </a>
             </div>
             
             <div class="menu-section">
-                <div class="menu-label">System</div>
-                <a href="partners.php">
-                    <i class="fas fa-handshake"></i>
-                    <span>Partners</span>
+                <div class="menu-label">Proj ISSHED</div>
+
+                <a href="timeline-management.php" >
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Timeline Management</span>
                 </a>
 
                 <a href="project-highlights.php">
                     <i class="fas fa-star"></i>
                     <span>Project Highlights</span>
                 </a>
-
-                <a href="timeline-management.php">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Timeline Management</span>
+                <a href="admin-document.php">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>SMN Documents</span>
                 </a>
-
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-label">System</div>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
@@ -674,10 +671,10 @@ $statistics = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     data-active="<?= $stat['is_active'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <form method="POST" style="display:inline;">
+                                            <form method="POST" id="delete-form-<?= $stat['id'] ?>" style="display:inline;">
                                                 <input type="hidden" name="stat_id" value="<?= $stat['id'] ?>">
                                                 <button type="submit" name="delete_stat" class="btn btn-danger btn-action" 
-                                                        onclick="return confirm('Are you sure you want to delete this statistic?')">
+                                                        onclick="return confirmDelete(<?= $stat['id'] ?>)">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -809,6 +806,14 @@ $statistics = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 modal.show();
             });
         });
+
+        // Delete confirmation function
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to delete this statistic?')) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+            return false;
+        }
 
         // Auto-dismiss alerts after 5 seconds
         setTimeout(function() {
