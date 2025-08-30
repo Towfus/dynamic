@@ -148,7 +148,7 @@ include 'header.php'; // Include the header with the ISSHED project navigation
 
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
-            <img src="bg_images/Brigada Eskwela2024 _077.jpg" class="card-img-top" alt="Community volunteers cleaning school grounds before school opening">
+            <img src="../bg_images/Brigada-Eskwela2024 _077.jpg" class="card-img-top" alt="Community volunteers cleaning school grounds before school opening">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-success fw-bold">Brigada Eskwela</h5>
               <p class="card-text text-muted flex-grow-1">

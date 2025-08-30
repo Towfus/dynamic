@@ -261,10 +261,10 @@ if (!isset($additionalCss)) {
                     <a class="nav-link fw-bold" href="proj.php">Project ISSHED</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#adopt-a-school">Adopt-a-School</a>
+                    <a class="nav-link fw-bold" href="proj.php#adopt-a-school">Adopt-a-School</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#brigada-eskwela">Brigada Eskwela</a>
+                    <a class="nav-link fw-bold" href="proj.php#brigada-eskwela">Brigada Eskwela</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="taxIncentives.php">Tax Incentives</a>
@@ -275,8 +275,9 @@ if (!isset($additionalCss)) {
                         More
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#be-our-partner">Be Our Partner</a></li>
-                        <li><a class="dropdown-item" href="#news-partnership-updates">News & Partnership Updates</a></li>
+                        <li><a class="dropdown-item" href="proj.php#be-our-partner">Be Our Partner</a></li>
+                        <li><a class="dropdown-item" href="index.php#news-partnership-updates">News & Partnership Updates</a></li>
+                         <li><a class="dropdown-item" href="smn_document.php">Smn documents</a></li>
                     </ul>
                 </li>
 
