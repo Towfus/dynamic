@@ -568,7 +568,7 @@ $partners = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <option value="sustained">Sustained Partners</option>
                                         <option value="individual">Individual Partners</option>
                                         <option value="strengthened">Strengthened Partners</option>
-                                        <option value="other">Other Private Partners</option>
+                                        <option value="private">Other Private Partners</option> <!-- FIXED: Changed from 'other' to 'private' -->
                                     </select>
                                 </div>
                             </div>
@@ -644,7 +644,16 @@ $partners = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td><?= htmlspecialchars($partner['name']) ?></td>
                                     <td>
                                         <span class="badge bg-secondary category-badge">
-                                            <?= ucfirst($partner['category']) ?>
+                                            <?= 
+                                                // Display user-friendly category names
+                                                match($partner['category']) {
+                                                    'sustained' => 'Sustained Partners',
+                                                    'individual' => 'Individual Partners',
+                                                    'strengthened' => 'Strengthened Partners',
+                                                    'private' => 'Other Private Partners',
+                                                    default => ucfirst($partner['category'])
+                                                }
+                                            ?>
                                         </span>
                                     </td>
                                     <td>
@@ -717,7 +726,7 @@ $partners = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <option value="sustained">Sustained Partners</option>
                                         <option value="individual">Individual Partners</option>
                                         <option value="strengthened">Strengthened Partners</option>
-                                        <option value="other">Other Private Partners</option>
+                                        <option value="private">Other Private Partners</option> <!-- FIXED: Changed from 'other' to 'private' -->
                                     </select>
                                 </div>
                             </div>
@@ -802,4 +811,4 @@ $partners = $stmt->fetchAll(PDO::FETCH_ASSOC);
         });
     </script>
 </body>
-</html></button>
+</html>

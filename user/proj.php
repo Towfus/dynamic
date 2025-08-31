@@ -786,12 +786,6 @@ include 'header.php'; // Include the header with the ISSHED project navigation
                 <div class="empty-icon" aria-hidden="true">📅</div>
                 <h3 class="empty-title">No Timeline Events Yet</h3>
                 <p class="empty-description">Timeline events will appear here once they are added through the management interface.</p>
-                <a href="manage_timeline.php" class="empty-action-btn">
-                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                    Add First Event
-                </a>
             </div>
         <?php else: ?>
             <!-- Timeline Container -->

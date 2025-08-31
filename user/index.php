@@ -148,7 +148,7 @@ include 'header.php'; // Include the header with the ISSHED project navigation
 
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
-            <img src="../bg_images/Brigada-Eskwela2024 _077.jpg" class="card-img-top" alt="Community volunteers cleaning school grounds before school opening">
+            <img src="../bg_images/Brigada Eskwela2024 _bg.jpg" class="card-img-top" alt="Community volunteers cleaning school grounds before school opening">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-success fw-bold">Brigada Eskwela</h5>
               <p class="card-text text-muted flex-grow-1">
@@ -268,9 +268,17 @@ include 'header.php'; // Include the header with the ISSHED project navigation
         
         <div class="mb-5">
             <?php 
+            // Define category titles with proper mapping
+            $categoryTitles = [
+                'sustained' => 'Sustained Partners',
+                'individual' => 'Individual Partners',
+                'strengthened' => 'Strengthened Partners',
+                'private' => 'Other Private Partners' // Changed from 'other' to 'private'
+            ];
+            
             $showMoreButton = false;
             $visibleCategories = ['sustained', 'individual'];
-            $hiddenCategories = ['strengthened', 'other'];
+            $hiddenCategories = ['strengthened', 'private']; // Changed from 'other' to 'private'
             
             // Display visible categories
             foreach ($visibleCategories as $category): 
@@ -354,7 +362,26 @@ include 'header.php'; // Include the header with the ISSHED project navigation
         </div>
     </div>
 </section>
-  <script src="partners.js"></script>
+
+<!-- JavaScript for the View All / View Less functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const viewAllBtn = document.getElementById('view-all-btn');
+    const morePartners = document.getElementById('morePartners');
+    
+    if (viewAllBtn && morePartners) {
+        viewAllBtn.addEventListener('click', function() {
+            if (morePartners.classList.contains('d-none')) {
+                morePartners.classList.remove('d-none');
+                viewAllBtn.innerHTML = 'View Less <i class="fas fa-chevron-up ms-2"></i>';
+            } else {
+                morePartners.classList.add('d-none');
+                viewAllBtn.innerHTML = 'View All <i class="fas fa-chevron-down ms-2"></i>';
+            }
+        });
+    }
+});
+</script>
 
 
 <!-- News & Partnership Carousel -->

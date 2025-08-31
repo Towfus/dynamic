@@ -187,7 +187,7 @@
           </div>
           
           <div class="text-center">
-            <a href="proj-isshed.html#be-our-partner">
+            <a href="proj.php#be-our-partner">
               <button class="download-btn">
                 <i class="fas fa-phone"></i>
                 Apply Now?
