@@ -445,6 +445,11 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <span>Impact Stories Management</span>
                 </a>
 
+                <a href="news_updates.php" class="active" >
+                    <i class="fas fa-newspaper"></i>
+                    <span>News Updates</span>
+                </a> 
+
                 
                  <a href="partners.php">
                     <i class="fas fa-handshake"></i>
@@ -455,7 +460,7 @@ $newsItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="menu-section">
                 <div class="menu-label">Proj ISSHED</div>
 
-                <a href="timeline-management.php" class="active">
+                <a href="timeline-management.php" >
                     <i class="fas fa-calendar-alt"></i>
                     <span>Timeline Management</span>
                 </a>

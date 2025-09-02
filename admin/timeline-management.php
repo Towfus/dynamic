@@ -535,6 +535,11 @@ if (isset($_GET['edit'])) {
                     <span>Impact Stories Management</span>
                 </a>
 
+                <a href="news_updates.php">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News Updates</span>
+                </a> 
+
                 
                  <a href="partners.php">
                     <i class="fas fa-handshake"></i>

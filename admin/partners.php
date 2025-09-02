@@ -470,10 +470,15 @@ $partners = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <span>Statistics Management</span>
                 </a> 
 
-                   <a href="impact-stories.php">
+                <a href="impact-stories.php">
                     <i class="fas fa-users"></i>
                     <span>Impact Stories Management</span>
                 </a>
+
+                <a href="news_updates.php">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News Updates</span>
+                </a> 
 
                 
                  <a href="partners.php" class="active">
